@@ -1,0 +1,55 @@
+Ryan Rickgauer
+z1729300
+Written Assignment 2
+Date 2-20-2019
+CSCI 360-3
+
+1) b
+
+2) found in hex digits 11-16 of the PSW which is x'00001A'
+
+3) condition code is last 2 bits of the 9th hex digit in the PSW. The 9th hex digit is X'A' or B'1010'. Last 2 bits of B'1010' is 10.
+
+4) The instruction code length is the first 2 bits of the 9th hex digit in the PSW. The 9th hex digit is X'A' = B'1010'. First 2 bits of B'1010' are 10 which equals 4 bytes.
+
+5) X'1A' - X'4' = X'16'
+
+6) X'0006' is an S0C6 error which is called a Specification Exception
+
+7) Summer used XL4 instead of F
+
+8) should be this:
+
+WRITTEN2 CSECT
+         USING WRITTEN2,15  ESTABLISH A BASE REGISTER
+         L     3,WINTER     LOAD A NUMBER INTO REGISTER 3
+         L     4,SPRING     LOAD ANOTHER NUMBER INTO REGISTER 4
+         AR    4,3          ADD THE TWO NUMBERS
+         S     4,YETMORE    SUBTRACT YET ANOTHER NUMBER
+         L     6,SIX        COPY SIX'S VALUE INTO REGISTER 6
+         LR    4,6          STORE THE RESULT
+         XDUMP AUTUMN,4     DUMP THE RESULT
+         SR    7,7          SET REGISTER 7 = 0
+         BCR   B'1111',14   RETURN TO CALLER
+* THIS IS A COMMENT LINE.
+NOTE     DC    CL2'OK'      PLACE KEEPER:  OKAY SO FAR
+SIX      DC    F'6'         A CONSTANT = 6
+WINTER   DC    F'211'       A NUMBER = 211
+SPRING   DC    F'94'        ANOTHER NUMBER = 94
+AUTUMN   DS    F            A PLACE TO PUT IT
+YETMORE  DC    F'28'        YET ANOTHER NUMBER
+         END   WRITTEN2     THE PROGRAM ENDS HERE
+
+9) 211 + 94 - 28 = 277
+
+10) the value of AUTUMN
+
+11) literals have a default length of 1 byte vs fullwords which are 4 bytes
+
+12) 'OK'
+
+13) it throws the exception before it gets to XDUMP
+
+14) 6
+
+15) 0

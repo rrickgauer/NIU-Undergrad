@@ -1,0 +1,43 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H                                       00010000
+//STEP1 EXEC PGM=ASSIST                                                 00020000
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+//SYSPRINT DD SYSOUT=*                                                  00040000
+//SYSIN DD *                                                            00050000
+********************************************                            00060000
+* Assignment 1 Part B                                                   00070000
+*                                                                       00080000
+* NAME:  Ryan Rickgauer                                                 00090000
+*                                                                       00100000
+* Register Usage                                                        00110000
+*                                                                       00120000
+*  2     Total                                                          00130000
+*  6     Counter                                                        00140000
+* 15     Base register                                                  00150000
+********************************************                            00160000
+MAIN     CSECT                                                          00170000
+         USING MAIN,15                                                  00180000
+         L     1,LEFT  LOAD LEFT INTO R1                                00190000
+         L     2,RIGHT LOAD RIGHT INTO R2                               00200000
+         SR    2,1     SUBTRACT R2 FROM R1                              00210000
+         ST    2,DIFF  STORE R2 INTO DIFF                               00220000
+         L     3,LEFT  LOAD LEFT INTO R3                                00230000
+         L     4,RIGHT LOAD RIGHT INTO R4                               00240000
+         AR    4,3     ADD R4 AND R3                                    00250000
+         ST    4,SUM   STORE R4 INTO SUM                                00260000
+         XDUMP SUM,8   DUMP SUM                                         00270000
+         BR    14                                                       00280000
+LEFT     DC    F'127'  LEFT = 127                                       00290000
+RIGHT    DC    F'59'   RIGHT = 59                                       00300000
+DIFF     DS    F       DIFF = NULL                                      00310000
+SUM      DS    F       SUM = null                                       00320000
+         END   MAIN                                                     00330000
+/*                                                                      00340000
+//                                                                      00350000
+                                                                        00360000
+                                                                        00370000
+                                                                        00380000
+                                                                        00390000
+                                                                        00400000
+                                                                        00410000
+                                                                        00420000
+                                                                        00430000

@@ -1,0 +1,121 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 21.36.24 JOB05140 ---- TUESDAY,   05 MAR 2019 ----
+ 21.36.24 JOB05140  IRR010I  USERID KC03E62  IS ASSIGNED TO THIS JOB.
+ 21.36.24 JOB05140  ICH70001I KC03E62  LAST ACCESS AT 21:36:15 ON TUESDAY, MARCH 5, 2019
+ 21.36.24 JOB05140  $HASP373 KC03E62A STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 21.36.24 JOB05140  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 21.36.24 JOB05140  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 21.36.24 JOB05140  -KC03E62A                      00     37 ******    .00     .0     84   0      0      0      0     0
+ 21.36.24 JOB05140  -KC03E62A ENDED.  NAME-Ryan                 TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 21.36.24 JOB05140  $HASP395 KC03E62A ENDED
+0------ JES2 JOB STATISTICS ------
+-  05 MAR 2019 JOB EXECUTION DATE
+-           38 CARDS READ
+-          118 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-            8 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03E62A JOB ,'Ryan',MSGCLASS=H                                       JOB05140
+         2 //STEP1 EXEC PGM=ASSIST                                                         
+         3 //STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                                
+         4 //SYSPRINT DD SYSOUT=*                                                          
+         5 //SYSIN DD *                                                                    
+ ICH70001I KC03E62  LAST ACCESS AT 21:36:15 ON TUESDAY, MARCH 5, 2019
+ IEF236I ALLOC. FOR KC03E62A STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IEF142I KC03E62A STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03E62.KC03E62A.JOB05140.D0000102.?         SYSOUT        
+ IEF285I   KC03E62.KC03E62A.JOB05140.D0000101.?         SYSIN         
+ IEF373I STEP/STEP1   /START 2019064.2136
+ IEF032I STEP/STEP1   /STOP  2019064.2136 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        0K  SYS:    11528K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03E62A/START 2019064.2136
+ IEF033I  JOB/KC03E62A/STOP  2019064.2136 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0                                                                                                                                 
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                       1 ********************************************                                             
+                                       2 *                                                                                        
+                                       3 *  The documentaton goes here.                                                           
+                                       4 *                                                                                        
+                                       5 ********************************************                                             
+ 000000                                6 MAIN     CSECT                                                                           
+ 000000                                7          USING MAIN,15                                                                   
+ 000000 E020 F040 001E 00040           8          XPRNT HEAD,30                                                                   
+ 000006 5870 F0A4            000A4     9          L     7,NUM1                                                                    
+ 00000A 1277                          10          LTR   7,7                                                                       
+ 00000C 4770 F016            00016    11          BNZ   AHEAD                                                                     
+ 000010 E020 F05E 0013 0005E          12          XPRNT OOPS,19                                                                   
+ 000016 5C60 F0B0            000B0    13 AHEAD    M     6,=F'1'                                                                   
+ 00001A 5D60 F0A8            000A8    14          D     6,NUM2                                                                    
+ 00001E 5B70 F0B4            000B4    15          S     7,=F'3'                                                                   
+ 000022 5890 F0AC            000AC    16          L     9,NUM3                                                                    
+ 000026 5C80 F0B0            000B0    17          M     8,=F'1'                                                                   
+ 00002A 1D87                          18          DR    8,7                                                                       
+ 00002C 1B88                          19          SR    8,8                                                                       
+ 00002E 5290 F082            00082    20          XDECO 9,VALUE                                                                   
+ 000032 E020 F071 001D 00071          21          XPRNT RESULT,29                                                                 
+ 000038 E020 F08E 0015 0008E          22          XPRNT TAIL,21                                                                   
+ 00003E 07FE                          23          BR    14                                                                        
+ 000040 40E6C540C1D9C540              24 HEAD     DC    CL30' WE ARE DOING SOME ARITHMETIC.'                                      
+ 00005E 40C5D9D9D6D97A40              25 OOPS     DC    CL19' ERROR:  NUM1 is 0.'                                                 
+ 000071 40E3C8C540D8E4D6              26 RESULT   DC    CL17' THE QUOTIENT IS:'                                                   
+ 000082                               27 VALUE    DS    12C                                                                       
+ 00008E 40E6C540C1D9C540              28 TAIL     DC    CL21' WE ARE DONE FOR NOW.'                                               
+ 0000A4 00000012                      29 NUM1     DC    F'18'                                                                     
+ 0000A8 00000005                      30 NUM2     DC    F'5'                                                                      
+ 0000AC 0000003E                      31 NUM3     DC    F'62'                                                                     
+                                      32          END   MAIN                                                                      
+ 0000B0 00000001                      33                =F'1'                                                                     
+ 0000B4 00000003                      34                =F'3'                                                                     
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:    1104 HIGH:     516 LEAVING:  491948 FREE BYTES. AVERAGE:       46 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.000 SECS,    35000 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+ WE ARE DOING SOME ARITHMETIC.                                                                                                    
+0*** EXECUTION TIME =    0.000 SECS.        10 INSTRUCTIONS EXECUTED -    10000 INSTRUCTIONS/SEC ***                              
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED  
+
+
+                                                                           
+1 ASSIST COMPLETION DUMP                                                                                                          
+0PSW AT ABEND FFC50009 4000002C       COMPLETION CODE   SYSTEM = 0C9 FIXED-POINT DIVIDE                                           
+0** TRACE OF INSTRUCTIONS JUST BEFORE TERMINATION: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  00  000000     E020 F040 001E                                                                                                  
+0  C0  000006     5870 F0A4                                                                                                       
+0  80  00000A     1277                                                                                                            
+0  60  00000C     4770 F016                                                                                                       
+0  A0  000016     5C60 F0B0                                                                                                       
+0  A0  00001A     5D60 F0A8                                                                                                       
+0  A0  00001E     5B70 F0B4                                                                                                       
+0  80  000022     5890 F0AC                                                                                                       
+0  80  000026     5C80 F0B0                                                                                                       
+0  80  00002A     1D87            <-- LAST INSTRUCTION DONE - PROBABLE CAUSE OF TERMINATION                                       
+0                                                                                                                                 
+-** TRACE OF LAST 10 BRANCH INSTRUCTIONS EXECUTED: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  20  00000C     4770 F016                                                                                                       
+0 REGS 0-7      F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    00000003    00000000                      
+  REGS 8-15     00000000    0000003E    F4F4F4F4    F4F4F4F4    F4F4F4F4    000000B8    FFFE7960    00000000                      
+0 FLTR 0-6      F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4                          
+1 USER STORAGE                                                                                                                    
+0                             CORE ADDRESSES SPECIFIED-     000000 TO 000200                                                      
+ 000000   E020F040 001E5870 F0A41277 4770F016    E020F05E 00135C60 F0B05D60 F0A85B70   *..0 ....0.....0...0.....0...0...*         
+ 000020   F0B45890 F0AC5C80 F0B01D87 1B885290    F082E020 F071001D E020F08E 001507FE   *0...0...0.......0...0.....0.....*         
+ 000040   40E6C540 C1D9C540 C4D6C9D5 C740E2D6    D4C540C1 D9C9E3C8 D4C5E3C9 C34B40C5   * WE ARE DOING SOME ARITHMETIC. E*         
+ 000060   D9D9D6D9 7A4040D5 E4D4F140 89A240F0    4B40E3C8 C540D8E4 D6E3C9C5 D5E340C9   *RROR.  NUM1 .. 0. THE QUOTIENT I*         
+ 000080   E27AF5F5 F5F5F5F5 F5F5F5F5 F5F540E6    C540C1D9 C540C4D6 D5C540C6 D6D940D5   *S.555555555555 WE ARE DONE FOR N*         
+ 0000A0   D6E64BF5 00000012 00000005 0000003E    00000001 00000003 F5F5F5F5 00000000   *OW.5....................5555....*         
+ 0000C0   F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *55555555555555555555555555555555*         
+   LINES    0000E0-0001C0    SAME AS ABOVE                                                                                        
+0                                                                                                                                 
