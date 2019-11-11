@@ -1,0 +1,98 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 21.29.40 JOB08536 ---- MONDAY,    18 FEB 2019 ----
+ 21.29.40 JOB08536  IRR010I  USERID KC03E62  IS ASSIGNED TO THIS JOB.
+ 21.29.40 JOB08536  ICH70001I KC03E62  LAST ACCESS AT 21:23:44 ON MONDAY, FEBRUARY 18, 2019
+ 21.29.40 JOB08536  $HASP373 KC03E62A STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 21.29.40 JOB08536  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 21.29.40 JOB08536  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 21.29.40 JOB08536  -KC03E62A                      00     37 ******    .00     .0     75   0      0      0      0     0
+ 21.29.40 JOB08536  -KC03E62A ENDED.  NAME-Ryan                 TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 21.29.40 JOB08536  $HASP395 KC03E62A ENDED
+0------ JES2 JOB STATISTICS ------
+-  18 FEB 2019 JOB EXECUTION DATE
+-           27 CARDS READ
+-           98 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-            8 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03E62A JOB ,'Ryan',MSGCLASS=H                                       JOB08536
+         2 //STEP1 EXEC PGM=ASSIST                                                 00020000
+         3 //STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+         4 //SYSPRINT DD SYSOUT=*                                                  00040000
+         5 //SYSIN DD *                                                            00050000
+ ICH70001I KC03E62  LAST ACCESS AT 21:23:44 ON MONDAY, FEBRUARY 18, 2019
+ IEF236I ALLOC. FOR KC03E62A STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IEF142I KC03E62A STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03E62.KC03E62A.JOB08536.D0000102.?         SYSOUT        
+ IEF285I   KC03E62.KC03E62A.JOB08536.D0000101.?         SYSIN         
+ IEF373I STEP/STEP1   /START 2019049.2129
+ IEF032I STEP/STEP1   /STOP  2019049.2129 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        0K  SYS:    11384K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03E62A/START 2019049.2129
+ IEF033I  JOB/KC03E62A/STOP  2019049.2129 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0                                                                                                                                 
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+ 000000                                1 WRITTEN2 CSECT                                                          00060000         
+ 000000                                2          USING WRITTEN2,15  ESTABLISH A BASE REGISTER                   00070000         
+ 000000 5830 F02C            0002C     3          L     3,WINTER     LOAD A NUMBER INTO REGISTER 3               00080000         
+ 000004 5840 F030            00030     4          L     4,SPRING     LOAD ANOTHER NUMBER INTO REGISTER 4         00090000         
+ 000008 1A43                           5          AR    4,3          ADD THE TWO NUMBERS                         00100000         
+ 00000A 5B40 F03C            0003C     6          S     4,YETMORE    SUBTRACT YET ANOTHER NUMBER                 00110000         
+ 00000E 4150 F034            00034     7          LA    5,SUMMER     SET REGISTER 5 = ADDRESS OF SUMMER          00120000         
+ 000012 5860 F028            00028     8          L     6,SIX        COPY SIX'S VALUE INTO REGISTER 6            00130000         
+ 000016 5046 5000            00000     9          ST    4,0(6,5)     STORE THE RESULT                            00140000         
+ 00001A E060 F038 0004 00038          10          XDUMP AUTUMN,4     DUMP THE RESULT                             00150000         
+ 000020 1B77                          11          SR    7,7          SET REGISTER 7 = 0                          00160000         
+ 000022 07FE                          12          BCR   B'1111',14   RETURN TO CALLER                            00170000         
+                                      13 * THIS IS A COMMENT LINE.                                               00180000         
+ 000024 D6D2                          14 NOTE     DC    CL2'OK'      PLACE KEEPER:  OKAY SO FAR                  00190000         
+ 000028 00000006                      15 SIX      DC    F'6'         A CONSTANT = 6                              00200000         
+ 00002C 000000D3                      16 WINTER   DC    F'211'       A NUMBER = 211                              00210000         
+ 000030 0000005E                      17 SPRING   DC    F'94'        ANOTHER NUMBER = 94                         00220000         
+ 000034                               18 SUMMER   DS    XL4          SUM OF THE TWO NUMBERS                      00230000         
+ 000038                               19 AUTUMN   DS    F            A PLACE TO PUT IT                           00240000         
+ 00003C 0000001C                      20 YETMORE  DC    F'28'        YET ANOTHER NUMBER                          00250000         
+                                      21          END   WRITTEN2     THE PROGRAM ENDS HERE                       00260000         
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:    1592 HIGH:     456 LEAVING:  491520 FREE BYTES. AVERAGE:       93 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.000 SECS,    22000 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+0*** EXECUTION TIME =    0.000 SECS.         7 INSTRUCTIONS EXECUTED -     7000 INSTRUCTIONS/SEC ***                              
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED                                                                             
+1 ASSIST COMPLETION DUMP                                                                                                          
+0PSW AT ABEND FFC50006 A000001A       COMPLETION CODE   SYSTEM = 0C6 SPECIFICATION                                                
+0** TRACE OF INSTRUCTIONS JUST BEFORE TERMINATION: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  00  000000     5830 F02C                                                                                                       
+0  80  000004     5840 F030                                                                                                       
+0  80  000008     1A43                                                                                                            
+0  60  00000A     5B40 F03C                                                                                                       
+0  A0  00000E     4150 F034                                                                                                       
+0  A0  000012     5860 F028                                                                                                       
+0  A0  000016     5046 5000       <-- LAST INSTRUCTION DONE - PROBABLE CAUSE OF TERMINATION                                       
+0                                                                                                                                 
+-** TRACE OF LAST 10 BRANCH INSTRUCTIONS EXECUTED: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  00  000000     0000                                                                                                            
+0 REGS 0-7      F4F4F4F4    F4F4F4F4    F4F4F4F4    000000D3    00000115    00000034    00000006    F4F4F4F4                      
+  REGS 8-15     F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    00000040    FFFE7960    00000000                      
+0 FLTR 0-6      F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4                          
+1 USER STORAGE                                                                                                                    
+0                             CORE ADDRESSES SPECIFIED-     000000 TO 000188                                                      
+ 000000   5830F02C 5840F030 1A435B40 F03C4150    F0345860 F0285046 5000E060 F0380004   *..0.. 0.... 0...0...0.......0...*         
+ 000020   1B7707FE D6D2F5F5 00000006 000000D3    0000005E F5F5F5F5 F5F5F5F5 0000001C   *....OK55.......L....55555555....*         
+ 000040   F5F5F5F5 00000000 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *5555....555555555555555555555555*         
+ 000060   F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *55555555555555555555555555555555*         
+   LINES    000080-000160    SAME AS ABOVE                                                                                        
+0                                                                                                                                 

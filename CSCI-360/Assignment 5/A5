@@ -1,0 +1,233 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H
+//STEP1    EXEC  PGM=ASSIST
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT   DD  SYSOUT=*
+//SYSIN      DD  *
+************************************************************
+*
+*  Program:     5
+*  Programmer:  Ryan Rickgauer
+*
+*  Register usage:
+*    1        PARAM LIST AND XDECO
+*    2        BUFFER
+*   10        LOCATION IN PROGRAM WHEN BRANCHED
+*   13        MAIN SAVE
+*   14        DO NOT USE
+*   15        BASE REGISTER
+************************************************************
+MAIN     CSECT
+         USING MAIN,15
+         ST    14,EXIT             SAVE EXIT LOCATION
+         LA    13,SAVEM            SET THE SAVE AREA
+         LA    1,TABLE             LOAD THE ADDRESS OF TABLE
+         ST    1,PARMS             STORE TABLE ADDRESS IN PARAMS
+         LA    1,EOT               LOAD ADDRESS OF END OF TABLE
+         ST    1,PARMS+4           STORE END OF TABLE IN PARAMS
+         LA    1,TABLELEN          LOAD THE ADDRESS OF TABLE LENGTH
+         ST    1,PARMS+8           STORE THE TABLE LENGTH IN PARAMS
+         LA    1,RESULT            LOAD ADDRESS OF RESULTS
+         ST    1,PARMS+16          STORE IN PARAMS
+         LA    1,PARMS             ADDRESS OF PARAMS IN R13
+         L     10,=V(BUILD)        LOAD EXTERNAL SUB
+         BALR  14,10               BRANCH TO SUB
+         LA    1,PARMS             SET PARAMS TO R1
+         L     10,=V(PRINT)        LOAD EXTERNAL SUB
+         BALR  14,10               BRANCH TO SUB
+         L      10,=V(TALLY)       LOAD EXTERNAL SUB
+EAT      XREAD BUFF,80             READ IN LINE
+         BL    EATE                CHECK IF LINE EXISTS
+         XDECI 2,BUFF              READ NUMBER
+         BO    EAT                 CHECK IF NUMBER EXISTS
+         C     2,=F'-12345678'     CHECK FOR SEPORATOR
+         BE    EATE                IF IT IS END EAT
+         B     EAT                 REPEAT EAT
+EATE     DS    0H                  END OF EAT
+FIND     XREAD BUFF,80             READ IN FIRST LINE
+         BL    FINDE               END IF THERE IS NO LINE
+         XDECI 2,BUFF              READ NUMBER
+         BO    FIND                SKIP IF NO  NUMBER
+         LA    1,PARMS             LOAD PARAMS
+         ST    2,PARMS+12          SET SEARCH PARAM
+         BALR  14,10               BRANCH TO EXTERNAL
+         L     1,RESULT            LOAD THE RESULT
+         L     2,PARMS+12          GET SEARCH NUMBER
+         XDECO 1,RESULTS           DECODE RESULTS
+         XDECO 2,SNUM              DECODE SNUM
+         XPRNT SONE,49             PRINT RESULTS
+         B     FIND                TOP OF SEARCH
+FINDE    DS    0H                  END OF SEARCH
+         L     14,EXIT             LOAD EXIT LOCATION
+         BR    14                  END PROGRAM
+         LTORG                     LITERALS ARE PUT HERE
+TABLE    DS    79F'-32'
+EOT      DS    0H
+TABLELEN DS    F'0'
+PARMS    DS    5F'0'
+RESULT   DS    F'0'
+SAVEM    DS    18F'0'
+SONE     DC    CL11'-THERE ARE '
+RESULTS  DS    CL12' '
+STWO     DC    CL14' MULTIPLES OF '
+SNUM     DS    CL12' '
+BUFF     DS    80C' '
+EXIT     DS    F
+************************************************************
+*
+*  BUILD
+*
+*  REGISTER USAGE:
+*    1        USED BY XDECI/PARAMS
+*    2        NUMBER CONVERTED TO DECIMAL
+*    3        TABLE
+*    4        END OF TABLE
+*    5        TABLE LENGTH
+*    6        COUNTER
+*   10        BASE
+*   13        SAVE LOCATION
+*   14        RETURN ADDRESS
+*   15        BASE REGISTER
+*
+************************************************************
+BUILD    CSECT
+         STM   14,12,12(13)        GET PARMS S
+         LR    12,15               LOAD R15 INTO R12
+         USING BUILD,10
+         LM    3,5,0(1)            LOAD PARAMS INTO R3,R4, AND R5
+         LA    14,SAVEB            LOAD ADDRESS OF SAVEB
+         ST    13,4(,14)           STORE ADDRESSES INTO R13
+         ST    14,8(,13)           STORE ADDRESSES INTO R14
+         LR    13,14               LOAD REGISTER 14 INTO 13
+         SR    6,6                 CLEAR R6 TO USE AS A COUNTER
+BLOOP    XREAD BUFFER,80           READ A LINE FROM THE INPUT FILE
+         BL    BEND                CHECK IF READ FAILED
+         LA    1,BUFFER            LOAD ADDRESS OF BUFFER INTO R1
+BLOOP1   XDECI 2,0(,1)             READ NUMBER FROM READ LINE
+         BO    BLOOP               CHECK IF READ FAILS
+         A     6,=F'1'             ADD ONE TO COUNTER
+         ST    2,0(,3)             STORE NUMBER IN TABLE
+         LA    3,4(,3)             ADVANCE THE TABLE POINTER
+         CR    3,4                 COMPARE TABLE POINTER TO THE EOT
+         BE    BEND                IF AT EOT END BUILD
+         B     BLOOP1              GOTO TOP OF LOOP
+BEND     DS    0H                  END LOOP
+         ST    6,0(,5)             STORE THE NUMBER OF ELEMENTS
+         L     13,4(,13)           LOAD PARMS INTO R13
+         LM    14,12,12(13)        LOAD PARMS INTO R13
+         BR    14                  END SUBROUTINE
+         LTORG                     LITERALS ARE PUT HERE
+BUFFER   DS    80C
+         DC    C'*'
+SAVEB    DS    18F'0'
+************************************************************
+*
+*  PRINT
+*
+*  REGISTER USAGE:
+*    1        USED BY XDECI/PARAMS
+*    2        LINE LOCATION
+*    3        TABLE
+*    4        END OF TABLE
+*    5        TABLE LENGTH
+*    6        COUNTER
+*    7        NUMBER IN THE TABLE
+*   10        BASE
+*   13        SAVE AREA
+*   14        DONT USE
+*   15        BASE REGISTER
+*
+************************************************************
+PRINT    CSECT
+         STM   14,12,12(13)        SAVE CALLING ROUTIN'S ADDRESSES
+         LR    12,15               PLACE ADDRESS OF RTN NAME INTO R12
+         USING PRINT,10            SET R10 AS THE BASE REGISTER
+         LM    3,5,0(1)            LOAD PARAMS INTO R3,R4, AND R5
+         LA    14,SAVEC            POINT R14 TO SAVE AREA
+         ST    13,4(,14)           STORE ADDRESS INTO SAVE AREA
+         ST    14,8(,13)           STORE ADDRESS OF RTN INTO SAVE AREA
+         LR    13,14               POINT R13 TO SAVE AREA
+         XPRNT PHEAD,28            PRINT THE TABLE HEAD
+         L     5,0(,5)             LOAD THE LENGTH OF THE TABLE
+PLOOP    L     6,=F'7'             COUNTER FOR WIDTH OF TABLE
+         LA    2,PLINE+1           SET R2 TO ADDRESS OF PRINT LINE
+         MVI   PLINE+1,C' '        CLEAR THE PRINT LINE
+         MVC   PLINE+2(83),PLINE+1 CLEAR THE PRINT LINE
+         C     5,=F'0'             CHECK IF ALL NUMS HAVE BEEN PRINTED
+         BE    PEND                IF YES THEN GO TO PEND
+PLOOP1   C     5,=F'0'             CHECK IF ALL NUMS HAVE BEEN PRINTED
+         BE    PEND1               IF YES THEN GO TO PEND1
+         L     7,0(,3)             GET CURRENT VALUE FROM TABLE
+         XDECO 7,TEMP              HEX TO BASE 10
+         MVC   0(12,2),TEMP        STORE BASE 10 NUM IN PRINT LINE
+         LA    2,12(,2)            ADVANCE PRINT LINE POINTER
+         LA    3,4(,3)             ADVANCE TABLE POINTER
+         S     5,=F'1'             DECREMENT TABLE LENGTH COUNTER
+         S     6,=F'1'             DECREMENT LINE WIDTH COUNTER
+         C     6,=F'0'             CHECK IF WE HAVE FILLED A LINE
+         BNE   PLOOP1              GOTO TOP OF LOOP1
+         XPRNT PLINE,85            PRINT LINE
+         B     PLOOP               GOTO TOP OF LOOP
+PEND1    XPRNT PLINE,85            PRINT LINE
+PEND     DS    0H
+         L     13,4(,13)           LOAD ADDRESS OF CALLING RTN INTO R13
+         LM    14,12,12(13)        RESTORE REGISTERS
+         BR    14                  END OF SUBROUTINE
+         LTORG                     LITERALS ARE PUT HERE
+PHEAD    DC    CL28'1              TABLE CONTENT'
+PLINE    DC    CL1'0'
+         DS    CL84' '
+TEMP     DS    CL12' '
+SAVEC    DS    18F'0'
+************************************************************
+*
+*  TALLY
+*
+*  REGISTER USAGE:
+*    3        TABLE POINTER
+*    4        EOT
+*    5        TABLE LENGTH
+*    6        NUMBER TO CHECK
+*    7        ADDRESS OF RETURN VAR
+*    8        CHECKS IF NUM IS MULTIPLE AFTER DIVISION
+*    9        NEXT NUMBER IN TABLE
+*   10        BASE
+*   11        NUMBER OF MULTIPLES FOUND
+*   13        SAVE AREA
+*   14        DONT USE
+*   15        BASE REGISTER
+*
+************************************************************
+TALLY    CSECT
+         STM   14,12,12(13)        LOAD ADDRESS OF CALLING RTN INTO R13
+         LR    12,15               PLACE ADDRESS OF RTN NAME INTO R12
+         USING TALLY,10            SET R10 AS THE BASE REGISTER
+         LM    3,7,0(1)            LOAD PARAMS INTO R3,R4, R5, R6, R7
+         LA    14,SAVED            POINT R14 TO SAVE AREA
+         ST    13,4(,14)           STORE ADDRESS INTO SAVE AREA
+         ST    14,8(,13)           STORE ADDRESS OF RTN INTO SAVE AREA
+         LR    13,14               POINT R13 TO SAVE AREA
+         SR    8,8                 CLEAR R8
+         SR    11,11               CLEAR R11
+TLOOP    CR    3,4                 COMPARE TABLE POINTER WITH EOT
+         BE    TEND                END IF EQUAL
+         L     9,0(,3)             LOAD TABLE NUMBER
+         M     8,=F'1'
+         DR    8,6                 DIVIDE R9 BY R6
+         C     8,=F'0'             CHECK IF IS A MULTIPLE
+         BE    MULT                IF MULTIPLE GOTO MULT
+         LA    3,4(,3)             ADVANCE TABLE POINTER
+         B     TLOOP               TOP OF LOOP
+MULT     A     11,=F'1'            ADD 1 TO R11
+         LA    3,4(,3)             ADVANCE TABLE POINTER
+         B     TLOOP               GO TO TOP OF LOOP
+TEND     DS    0H                  END OF TALLY
+         ST    11,0(,7)            SET RETURN TO VAR
+         L     13,4(,13)           LOAD ADDRESS OF CALLING RTN INTO R13
+         LM    14,12,12(13)        RESTORE ADDRESSES
+         BR    14                  END OF SUBROUTINE
+         LTORG                     LITERALS ARE PUT HERE
+SAVED    DS    18F'0'
+         END   MAIN
+/*
+//FT05F001  DD  DSN=KC02314.SPRING19.CSCI360.HW5DATA,DISP=SHR
+//

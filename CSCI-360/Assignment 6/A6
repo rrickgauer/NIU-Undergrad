@@ -1,0 +1,74 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+************************************************************
+*
+*  Program:     ASSIGN6
+*  Programmer:  Ryan Rickgauer
+************************************************************
+ENTRY    DSECT
+DESC     DS    30C
+VALUE    DS    PL3
+***********************************
+*
+*  Register usage:
+*  15   MAIN
+*  14   Exit
+*  1    Params
+***********************************
+MAIN     CSECT
+         USING MAIN,15
+* Read in file and store numbers in table
+         USING ENTRY,5
+         LA    5,TABLE                 Point register 5 at TABLE.
+         LA    3,BUFFER
+TOPLOOP1 XREAD BUFFER,80               Priming read.
+         BC    B'0100',ENDLOOP1        If EOF, end the loop.
+         C     5,=A(EOT)               If TABLE is full, we also
+         LA    3,BUFFER
+***
+*
+         MVC   DESC(30),BUFFER        place desc into table
+         LA    3,32(0,3)              advance buffer pointer
+         MVC   TEMP(5),0(3)           place value into temp
+         PACK  VALUE(3),TEMP(5)
+         LA    5,33(0,5)              Advance the table pointer.
+*
+*
+***
+         B     TOPLOOP1                Go to the top of the loop.
+ENDLOOP1 DS    0H                      End of this loop.
+         ST    5,EOT                   Store the address of the 1st
+*                                      unused table entry.
+         LA    5,TABLE
+         XPRNT =C'1Start Print',12
+PRINT    DS    0H
+         C     5,EOT
+         BE    END2
+*
+*
+          MVC   PDESC(32),DESC              GET NEXT number
+          MVC   PVALUE(6),=X'40212020202020'
+          ED    PVALUE(6),VALUE
+*          XPRNT LINE,36
+          XPRNT PVALUE,6
+          LA    5,33(0,5)              ADVANCE TABLE pointer
+*
+*
+         B     PRINT
+END2     DS    0H
+         BR    14
+         LTORG
+BUFFER   DS    80C
+TABLE    DC    15CL33' '
+EOT      DS    F
+TEMP     DS    5C
+LINE     DC    CL1' '
+PDESC    DS    30C
+PVALUE   DS    CL6' '
+         END   MAIN
+/*
+//FT05F001  DD  DSN=KC02314.SPRING19.CSCI360.HW6DATA,DISP=SHR
+//

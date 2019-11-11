@@ -1,0 +1,93 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 16.26.46 JOB08885 ---- SUNDAY,    24 FEB 2019 ----
+ 16.26.46 JOB08885  IRR010I  USERID KC03E62  IS ASSIGNED TO THIS JOB.
+ 16.26.46 JOB08885  ICH70001I KC03E62  LAST ACCESS AT 16:12:35 ON SUNDAY, FEBRUARY 24, 2019
+ 16.26.46 JOB08885  $HASP373 KC03E62A STARTED - INIT 2    - CLASS A        - SYS S0W1
+ 16.26.46 JOB08885  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 16.26.46 JOB08885  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 16.26.46 JOB08885  -KC03E62A                      00     37 ******    .00     .0     78   0      0      0      0     0
+ 16.26.46 JOB08885  -KC03E62A ENDED.  NAME-Ryan                 TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 16.26.46 JOB08885  $HASP395 KC03E62A ENDED
+0------ JES2 JOB STATISTICS ------
+-  24 FEB 2019 JOB EXECUTION DATE
+-           27 CARDS READ
+-           93 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-            8 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+         1 //KC03E62A JOB ,'Ryan',MSGCLASS=H                                       JOB08885
+         2 //STEP1 EXEC PGM=ASSIST                                                 00020000
+         3 //STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+         4 //SYSPRINT DD SYSOUT=*                                                  00040000
+         5 //SYSIN DD *                                                            00050000
+ ICH70001I KC03E62  LAST ACCESS AT 16:12:35 ON SUNDAY, FEBRUARY 24, 2019
+ IEF236I ALLOC. FOR KC03E62A STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IEF142I KC03E62A STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03E62.KC03E62A.JOB08885.D0000102.?         SYSOUT        
+ IEF285I   KC03E62.KC03E62A.JOB08885.D0000101.?         SYSIN         
+ IEF373I STEP/STEP1   /START 2019055.1626
+ IEF032I STEP/STEP1   /STOP  2019055.1626 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        0K  SYS:    11392K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03E62A/START 2019055.1626
+ IEF033I  JOB/KC03E62A/STOP  2019055.1626 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT         
+0                                                                                                                                 
+0                                                                                                               PAGE    1         
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                       
+                                       1 ********************************************                            00060000         
+                                       2 * EXAMPLE PROGRAM                                                       00070000         
+                                       3 *                                                                       00080000         
+                                       4 * NAME:  Practice                                                       00090000         
+                                       5 *                                                                       00100000         
+                                       6 * Register Usage                                                        00110000         
+                                       7 *                                                                       00120000         
+                                       8 *  2     Total                                                          00130000         
+                                       9 *  6     Counter                                                        00140000         
+                                      10 * 15     Base register                                                  00150000         
+                                      11 *                                                                       00160000         
+                                      12 **************************************                                  00170000         
+ 000000                               13 MAIN     CSECT                                                          00180000         
+ 000000                               14          USING MAIN,15                                                  00190000         
+ 000000 1B25                          15          SR    2,5                                                      00200000         
+ 000002 1B3A                          16          SR    3,10                                                     00210000         
+ 000004 5220 0002            00002    17          XDECO 2,2                                                      00220001         
+ 000008 5230 0003            00003    18          XDECO 3,3                                                      00230001         
+ 00000C E160 0000 0000 00000          19          XDUMP                                                          00240001         
+ 000012 07FE                          20          BR    14                                                       00250001         
+                                      21          END   MAIN                                                     00260001         
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                      
+0*** DYNAMIC CORE AREA USED:  LOW:     400 HIGH:     320 LEAVING:  492848 FREE BYTES. AVERAGE:       32 BYTES/STMT ***            
+0*** ASSEMBLY TIME =    0.000 SECS,    22000 STATEMENTS/SEC ***                                                                   
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                       
+0*** EXECUTION TIME =    0.000 SECS.         4 INSTRUCTIONS EXECUTED -     4000 INSTRUCTIONS/SEC ***                              
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED                                                                             
+1 ASSIST COMPLETION DUMP                                                                                                          
+0PSW AT ABEND FFC50004 8000000C       COMPLETION CODE   SYSTEM = 0C4 PROTECTION                                                   
+0** TRACE OF INSTRUCTIONS JUST BEFORE TERMINATION: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  00  000000     1B25                                                                                                            
+0  40  000002     1B3A                                                                                                            
+0  40  000004     5220 0002                                                                                                       
+0  80  000008     4040 4040       <-- LAST INSTRUCTION DONE - PROBABLE CAUSE OF TERMINATION                                       
+0                                                                                                                                 
+-** TRACE OF LAST 10 BRANCH INSTRUCTIONS EXECUTED: PSW BITS SHOWN ARE THOSE BEFORE CORRESPONDING INSTRUCTION DECODED ***          
+0  IM LOCATION    INSTRUCTION :  IM = PSW BITS 32-39(ILC,CC,MASK) BEFORE INSTRUCTION EXECUTED AT PROGRAM LOCATION SHOWN           
+0  00  000000     0000                                                                                                            
+0 REGS 0-7      F4F4F4F4    F4F4F4F4    00000000    00000000    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4                      
+  REGS 8-15     F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    F4F4F4F4    00000018    FFFE7960    00000000                      
+0 FLTR 0-6      F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4        F4F4F4F4F4F4F4F4                          
+1 USER STORAGE                                                                                                                    
+0                             CORE ADDRESSES SPECIFIED-     000000 TO 000160                                                      
+ 000000   1B254040 40404040 40404040 40F00000    000007FE F5F5F5F5 F5F5F5F5 00000000   *..           0......55555555....*         
+ 000020   F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5    F5F5F5F5 F5F5F5F5 F5F5F5F5 F5F5F5F5   *55555555555555555555555555555555*         
+   LINES    000040-000120    SAME AS ABOVE                                                                                        
+0                                                                                                                                 

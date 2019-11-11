@@ -1,0 +1,28 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H
+//STEP1 EXEC PGM=ASSIST
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSIN DD *
+************************************************************
+*
+*  Program:     ASSIGN6
+*  Programmer:  Ryan Rickgauer
+************************************************************
+ENTRY    DSECT     Format for Table
+DESC     DS    30C
+VALUE    DS    PL3
+***********************************
+*
+*  Register usage:
+*  15   MAIN
+*  14   Exit
+*  1    Params
+***********************************
+MAIN     CSECT
+         USING MAIN,15
+         XPRNT =CL' PROGRAM 8',10
+         BR    14
+         END   MAIN
+/*
+//FT05F001  DD  DSN=KC02314.SPRING19.CSCI360.HW6DATA,DISP=SHR
+//

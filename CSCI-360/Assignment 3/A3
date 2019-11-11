@@ -1,0 +1,166 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H                                       00010000
+//STEP1 EXEC PGM=ASSIST                                                 00020000
+//STEPLIB DD DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                        00030000
+//SYSPRINT DD SYSOUT=*                                                  00040000
+//SYSIN DD *                                                            00050000
+********************************************                            00060000
+*                                                                       00070000
+* Ryan Rickgauer                                                        00080099
+* CSCI 360-2                                                            00081099
+* Program 3                                                             00082099
+*                                                                       00083099
+* Register usage:                                                       00084099
+* 1  - XDECI                                                            00085099
+* 2  - PRODUCT ID                                                       00086099
+* 3  - NUMBER ORDERDERED                                                00087099
+* 4  - PRICE EACH                                                       00088099
+* 5  - NUM ORDERED                                                      00089099
+* 7  - PRE TOTAL                                                        00089299
+* 8  - ORDER ID                                                         00089399
+* 9  - DISCOUNT                                                         00089499
+* 10 - SHIPPING                                                         00089599
+* 11 - TOTAL                                                            00089699
+* 12 - COUNTER                                                          00089799
+* 13 - SUM OF SALES                                                     00089899
+*                                                                       00090000
+********************************************                            00100000
+MAIN     CSECT                                                          00110000
+         USING MAIN,15                                                  00120000
+         TITLE 'RYAN RICKGAUER, CSCI 360, PROGRAM3'                     00120199
+         XPRNT TOP,80                                                   00120299
+         XPRNT HEAD,98                                                  00120399
+         SR    12,12            SET REGISTER 12 TO 0                    00121091
+         SR    13,13            SET R13 = 0                             00122091
+         XREAD BUFFER,80        READ FIRST NUMBER                       00123099
+LOOP     DS    0H               START LOOP                              00130099
+         BC    B'0100',ENDLOOP  EOF                                     00131099
+         XDECI 2,BUFFER         READ FIRST NUM                          00140099
+         XDECI 3,0(1)           READ SECOND NUM                         00150099
+         XDECI 4,0(1)           READ THIRD NUM                          00160099
+         XDECI 5,0(1)           READ FOURTH NUM                         00170099
+         LR    7,4              SET R7=R4                               00180199
+         LR    8,3              SET R8=R3                               00180299
+         LR    3,5              SET R3=R5                               00180399
+         MR    6,3              MULTIPLY R6 * R7                        00181099
+         C     7,FIFT           IS PRETOTAL >= 15000                    00210299
+         BC    B'0010',GETD     JUMP TO GETD                            00210399
+         SR    9,9              SET DISCOUNT = 0                        00210499
+         BC    B'1111',CTWO     GO TO NEXT COMPARISON                   00210699
+CTWO     C     2,PART           IS PRODUCT ID = 566824                  00210799
+         BC    B'1000',ONEK     JUMP TO ONEK IF R2=566824               00210999
+         BC    B'1111',CTHR     GO TO COMPARISON 3                      00211199
+CTHR     C     7,FIVEK          IS PRETOTAL >= 5000                     00211299
+         BC    B'0010',NOSH     JUMP T0 NOSH IF R7>=5000                00211499
+         L     10,SIXH          SET SHIPPING TO 600                     00211699
+         BC    B'1111',ENDC     JUMP T0 END OF CONDITIONS               00211799
+GETD     L     9,FIVEH          SET DISCOUNT = 500                      00211899
+         BC    B'1111',CTWO     GO TO CTWO BRANCH                       00212299
+ONEK     A     9,ONETH          ADD 1000 TO DISCOUNT                    00212399
+         BC    B'1111',CTHR     JUMP TO CTHR BRANCH                     00212699
+NOSH     DS    0H                                                       00212758
+         L     10,ZERO          SET SHIPPING TO 0                       00212899
+         SR    12,12            SET R12=0                               00212999
+         L     12,SHIPCNT       SET R12=SHIPCNT                         00213099
+         A     12,ONE           ADD ONE TO R12                          00213199
+         ST    12,SHIPCNT       SET SHIPCNT TO R12+1                    00213299
+         BC    B'1111',ENDC     JUMP TO END OF CONDITIONS               00213399
+ENDC     DS    0H                                                       00213445
+         XDECO 2,PID            DECODE R2                               00213599
+         XDECO 8,OID            DECODE R8                               00213699
+         XDECO 4,PRIC           DECODE R4                               00213799
+         XDECO 3,NUMO           DECODE R3                               00213899
+         XDECO 10,STOT          DECODE R10                              00213999
+         XDECO 9,DISC           DECODE R9                               00214099
+         LR    11,7             set total = pretotal                    00214191
+         AR    11,10            add shipping costs to total             00214291
+         SR    11,9             subtract discount from total            00214391
+         SR    12,12            SET R12 = 0                             00214491
+         L     12,SALECNT       place sale count into r12               00214591
+         A     12,ONE           add one to r12                          00214691
+         ST    12,SALECNT       store new count into SALECNT            00214791
+         SR    12,12            clear r12 content                       00214891
+         AR    13,11            ADD TOTAL TO SUM                        00214991
+         XDECO 11,TOTAL         DECODE R11                              00216199
+         XPRNT LINE,98          PRINT INFO                              00216299
+         XREAD BUFFER,80        READ IN NEXT LINE                       00216399
+         BC    B'1111',LOOP     GO TO LOOP                              00216499
+ENDLOOP  DS    0H                                                       00217099
+         SR    2,2              SET R2 = 0                              00230099
+         SR    3,3              SET R3 = 0                              00230199
+         LR    3,13             SET R3=SUM OF SALES                     00230299
+         SR    5,5              SET R5 = 0                              00230399
+         L     5,SALECNT        SET R14=SALECNT                         00230499
+         DR    2,5              CALCULATE AVG                           00230599
+         XDECO 3,AVG            DECODE R3 AND STORE IN AVG              00230699
+         XDECO 13,SUM           DECODE R13 AND STORE IN SUM             00230799
+         L     12,SALECNT       SET R12=SALECNT                         00230999
+         XDECO 12,NSALES        DECODE NUMBER OF SALES                  00231099
+         SR    5,5              CLEAR R5                                00231199
+         L     5,SHIPCNT        SET R5=SHIPCNT                          00231299
+         XDECO 5,NSHIP          DECODE NUMBER OF FREESHIPPING           00231399
+         XPRNT TA,49            PRINT NUMBER OF SALES                   00231699
+         XPRNT TB,49            PRINT NUMBER OF FREE SHIPPING           00231799
+         XPRNT TC,49            PRINT SALES AVERAGE                     00231899
+         XPRNT TD,49            PRINT SALES TOTAL                       00231999
+         BR    14               END OF CODE                             00232299
+FIVEH    DC    F'500'                                                   00232371
+ZERO     DC    F'0'                                                     00232478
+SIXH     DC    F'600'                                                   00232571
+FIFT     DC    F'14999'                                                 00233079
+FIVEK    DC    F'4999'                                                  00233181
+PART     DC    F'566824'                                                00234071
+ONETH    DC    F'1000'                                                  00235071
+SALECNT  DC    F'0'                                                     00236091
+SHIPCNT  DC    F'0'                                                     00237091
+ONE      DC    F'1'                                                     00239191
+         LTORG                                                          00239597
+BUFFER   DS    80C                                                      00239697
+LINE     DC    C'0'                                                     00240099
+OID      DS    CL12                                                     00260099
+         DC    CL2' '                                                   00270099
+PID      DS    CL12                                                     00290099
+         DC    CL2' '                                                   00300099
+PRIC     DS    CL12                                                     00320016
+         DC    CL5' '                                                   00330099
+NUMO     DS    CL12                                                     00350016
+         DC    CL2' '                                                   00351099
+DISC     DS    CL12                                                     00352099
+         DC    CL2' '                                                   00352199
+STOT     DS    CL12                                                     00352299
+TOTAL    DS    CL12                                                     00352484
+TA       DC    CL27'-TOTAL NUMBER OF SALES:    '                        00354699
+         DC    CL10' '                                                  00354799
+NSALES   DS    CL12                                                     00354891
+TB       DC    CL27'-NUMBER WITH FREE SHIPPING:'                        00355199
+         DC    CL10' '                                                  00355299
+NSHIP    DS    CL12                                                     00355391
+TC       DC    CL27'-AVERAGE SALE TOTAL:      '                         00355699
+         DC    CL10' '                                                  00355799
+AVG      DS    CL12                                                     00355891
+TD       DC    CL27'-SUM OF ALL SALES:        '                         00356199
+         DC    CL10' '                                                  00356299
+SUM      DS    CL12                                                     00356391
+TOP      DC    CL52'1'                                                  00356599
+         DC    CL28'Sales Report -- Widgets-R-Us'                       00357099
+HEAD     DC    C'0'                                                     00358099
+         DC    CL5' '                                                   00358199
+         DC    CL8'ORDER ID'                                            00359099
+         DC    CL5' '                                                   00359199
+         DC    CL10'PRODUCT ID'                                         00359299
+         DC    CL5' '                                                   00359399
+         DC    CL10'PRICE EACH'                                         00359799
+         DC    CL5' '                                                   00359899
+         DC    CL14'NUMBER ORDERED'                                     00359999
+         DC    CL5' '                                                   00360099
+         DC    CL8'DISCOUNT'                                            00360199
+         DC    CL5' '                                                   00360299
+         DC    CL8'SHIPPING'                                            00360399
+         DC    CL4' '                                                   00360499
+         DC    CL5'TOTAL'                                               00360599
+         END   MAIN                                                     00361000
+/*                                                                      00370000
+//FT05F001  DD  DSN=KC02314.SPRING19.CSCI360.HW3DATA,DISP=SHR           00380006
+/*                                                                      00390006
+//FT06F001   DD SYSOUT=*                                                00400006
+//                                                                      00410006
+                                                                        00470000

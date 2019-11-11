@@ -1,0 +1,102 @@
+//KC03E62A JOB ,'Ryan',MSGCLASS=H                                       00010000
+//STEP1    EXEC  PGM=ASSIST                                             00020000
+//STEPLIB    DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                    00030000
+//SYSPRINT   DD  SYSOUT=*                                               00040000
+//SYSIN      DD  *                                                      00050000
+************************************************************            00060000
+*                                                                       00070000
+*  Program:     ASSIGN2                                                 00080000
+*  Programmer:  Ryan Rickgauer                                          00090000
+*                                                                       00100000
+*  Register usage:                                                      00110000
+*    1        Used by XDECI                                             00120004
+*    2        W                                                         00130004
+*    3        X                                                         00140004
+*    4        Y                                                         00150004
+*    5        Z                                                         00160004
+*    6        calculation                                               00170004
+*    7        num lines                                                 00180004
+*    8        sum                                                       00190004
+*   15        Base register                                             00200004
+************************************************************            00210004
+MAIN     CSECT                                                          00220004
+         USING MAIN,15                                                  00230004
+         SR    7,7            Set register 7 to 0                       00240004
+         SR    8,8            Set register 8 to 0                       00250004
+LOOP     XREAD BUFFER,80      Start loop, read in the first 80          00260004
+         BC    B'0100',ENDLOOP  check if read failed                    00270004
+         A     7,=F'1'       Add one to line counter                    00280004
+         XDECI 2,BUFFER      Store the 1st num in 2                     00290004
+         XDECI 3,0(1)        Store the 2nd num in 3                     00300004
+         XDECI 4,0(1)        Store the 3rd num in 4                     00310004
+         XDECI 5,0(1)        Store the 4th num in 5                     00320004
+         LR    6,2           Load register 2 into 6                     00330004
+         SR    6,3           Subtract register 3 from 6                 00340004
+         AR    6,4           Add register 4 to 6                        00350004
+         SR    6,5           Subtract register 5 from 6                 00360004
+         AR    8,6           Load register 6 to 8                       00370004
+         XDECO 2,WNUM        Format register 2 and store in WNUM        00380004
+         XDECO 3,XNUM        Format register 3 and store in XNUM        00390004
+         XDECO 4,YNUM        Format register 4 and store in YNUM        00400004
+         XDECO 5,ZNUM        Format register 5 and store in ZNUM        00410004
+         XDECO 6,RNUM        Format register 6 and store in RNUM        00420004
+         XPRNT LINE,90       Print formated string at LINE              00430004
+         BC    B'1111',LOOP  Goto top of loop                           00440004
+ENDLOOP  XDECO 7,NLINE       Format register 7 and store in NLINE       00450004
+         XDECO 8,SUM         Format register 8 and store in SUM         00460004
+         XPRNT STAT,66       Print the formated string at STAT          00470004
+         BR    14            End of code                                00480004
+         LTORG               Literals are put here                      00490004
+LINE     DC    C' '          Formated string                            00500004
+         DC    CL3'W ='                                                 00510004
+WNUM     DS    CL12          Variable WNUM                              00520004
+         DC    CL8' '                                                   00530004
+         DC    CL3'X ='                                                 00540004
+XNUM     DS    CL12          Variable XNUM                              00550004
+         DC    CL8' '                                                   00560004
+         DC    CL3'Y ='                                                 00570004
+YNUM     DS    CL12          Variable YNUM                              00580004
+         DC    CL8' '                                                   00590004
+         DC    CL3'Z ='                                                 00600004
+ZNUM     DS    CL12          Variable ZNUM                              00610004
+         DC    CL8' '                                                   00620004
+         DC    CL8'Result ='                                            00630004
+RNUM     DS    CL12          Variable RNUM                              00640004
+STAT     DC    C' '          Start of formated string STAT              00650004
+         DC    CL17'Number of Lines ='                                  00660004
+NLINE    DS    CL12          Variable NLINE                             00670004
+         DC    CL8' '                                                   00680004
+         DC    CL16'Sum of Results ='                                   00690004
+SUM      DS    CL12          Variable SUM                               00700004
+BUFFER   DS    0C            Variable BUFFER                            00710004
+         END   MAIN          End of program                             00720004
+/*                                                                      00730004
+//FT05F001   DD  *                                                      00740004
+   005   005   005   005                                                00750004
+   006   001   002   004                                                00760004
+     0    +7     2   -45                                                00770004
+   100   088   035    10                                                00780004
+     0     0     0     0                                                00790004
+    10   -10    10   -10                                                00800004
+   500   230     9    58                                                00810004
+   516   853     0    17                                                00820004
+   020     0   245   316                                                00830004
+   529   977   681     0                                                00840004
+   013   250    85   831                                                00850004
+     0   364   275     0                                                00860004
+   887   100   293   993                                                00870004
+   234   447   591    13                                                00880004
+   -89    -7    23   104                                                00890004
+   001   002   003   004                                                00900004
+   008   007   006   005                                                00910004
+   999   998   997   996                                                00920004
+/*                                                                      00930004
+//FT06F001   DD SYSOUT=*                                                00940004
+//                                                                      00950004
+                                                                        00960004
+                                                                        00970004
+                                                                        00980004
+                                                                        00990004
+                                                                        01000004
+                                                                        01010004
+                                                                        01020004
