@@ -1,0 +1,114 @@
+CSCI 470/502                                Assignment 1 – Console Program                                 Summer 2019
+100 points
+
+In this assignment, you will write a Java console program to calculate tips.  We’ll break the code for this assignment into two separate classes. 
+
+Class TipCalculator
+
+This class encapsulates the tip calculation logic.  It will be reused with a different user interface on Assignment 2.
+
+Data Members
+
+The class should have the following private data members:
+
+* Bill amount (a double with the default value 0)
+* Tip percentage (an integer with the default value 20)
+* Party size (an integer with the default value 1)
+
+Methods
+
+The class should have the following methods:
+
+* A default constructor (optional)
+* Public getters and setters for the three data members.
+* getTotalBill() – computes and returns the total bill (bill amount plus tip).
+* getIndividualShare() – computes and returns the value of an equal share of the total bill (i.e., the total bill divided by the party size).
+
+Class TipAppClass
+
+This class encapsulates the user interface of the program.
+
+Data Members
+
+* A TipCalculator object. (This could be a local variable in the calculateTips() method if you prefer.)
+
+Methods
+
+* main() – creates an instance of TipApp and uses it to call calculateTips().
+
+* calculateTips() – This method will contain the logic for interacting with the user at the keyboard and displaying the output of the program.  Feel free to extract parts of this logic into other methods that are called by calculateTips().
+
+1. Create a Scanner object to read input from the keyboard.
+
+2. Prompt for and read the bill amount.  If an invalid numeric value is entered by the user, print an error message and repeat the process until a valid value is entered.  When a valid value is entered, use it to set the bill amount data member for the TipCalculator object.
+3. Prompt for and read the tip percentage.  If an invalid numeric value is entered by the user, print an error message and repeat the process until a valid value is entered.  When a valid value is entered, use it to set the tip percentage data member for the TipCalculator object.
+
+4. Prompt for and read the party size.  If an invalid numeric value is entered by the user, print an error message and repeat the process until a valid value is entered.  When a valid value is entered, use it to set the party size data member for the TipCalculator object.
+
+5. Call the various TipCalculator methods to produce the output.
+
+6. Ask the user whether they want to continue and read their response.  If the response is y or Y, go back to Step 2 and repeat.
+
+Notes
+
+* To make grading by the TAs easier, remove all package statements in the .java files that you submit.
+
+* Invalid input should include values that are not numeric (which will result in a NumberFormatException when Java attempts to convert them to a number) as well as numeric values that should not be possible. 
+
+For example, it would be impossible to have a negative bill amount or a party size of 0.  However, a tip percentage of 0 should certainly be possible.
+
+* Both upper- and lower-case letters should be allowed in the user’s response to the 
+
+"Another bill? (y/n): " prompt.
+
+
+Submit your two .java files on Blackboard.  Do NOT zip your files for submission.
+
+
+Sample Output
+
+A sample run of the program might look something like this:
+
+*** Tip Calculator ***
+
+Enter the bill amount: 105.37
+Enter your desired tip percentage (20 equals 20%): 2a
+Please enter a valid tip percentage.
+
+Enter your desired tip percentage (20 equals 20%): 20
+Enter the size of your party: -3
+Please enter a valid party size.
+
+Enter the size of your party: 3
+
+*** Your Bill ***
+
+Bill Amount: $105.37
+Tip Percentage: 20%			(Sample output continues on next page.)
+Party Size: 3
+
+Total Bill (with Tip): $126.44
+Share for Each Individual: $42.15
+
+Another bill? (y/n): y
+
+Enter the bill amount: 78.27
+Enter your desired tip percentage (20 equals 20%): 23
+Enter the size of your party: 2
+
+*** Your Bill ***
+
+Bill Amount: $78.27
+Tip Percentage: 23%
+Party Size: 2
+
+Total Bill (with Tip): $96.27
+Share for Each Individual: $48.14
+
+Another bill? (y/n): N
+
+Goodbye!
+
+
+CSCI 470/5020Assignment 1 - Console Program0Page 1 of 2
+
