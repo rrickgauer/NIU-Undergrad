@@ -1,0 +1,403 @@
+1                    J E S 2  J O B  L O G  --  S Y S T E M  S 0 W 1  --  N O D E  Z O S K C T R         
+0 
+ 19.54.35 JOB04291 ---- MONDAY,    29 APR 2019 ----
+ 19.54.35 JOB04291  IRR010I  USERID KC03E62  IS ASSIGNED TO THIS JOB.
+ 19.54.35 JOB04291  ICH70001I KC03E62  LAST ACCESS AT 19:54:35 ON MONDAY, APRIL 29, 2019
+ 19.54.35 JOB04291  $HASP373 KC03E62A STARTED - INIT 1    - CLASS A        - SYS S0W1
+ 19.54.35 JOB04291  -                                         --TIMINGS (MINS.)--            ----PAGING COUNTS---
+ 19.54.35 JOB04291  -JOBNAME  STEPNAME PROCSTEP    RC   EXCP    TCB    SRB  CLOCK   SERV  PG   PAGE   SWAP    VIO SWAPS
+ 19.54.35 JOB04291  -KC03E62A                      00    214 ******    .00     .0    240   0      0      0      0     0
+ 19.54.35 JOB04291  -KC03E62A ENDED.  NAME-Ryan                 TOTAL TCB CPU TIME=   .00  TOTAL ELAPSED TIME=    .0
+ 19.54.35 JOB04291  $HASP395 KC03E62A ENDED
+0------ JES2 JOB STATISTICS ------
+-  29 APR 2019 JOB EXECUTION DATE
+-           40 CARDS READ
+-          399 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           32 SYSOUT SPOOL KBYTES
+-         0.00 MINUTES EXECUTION TIME
+ !! END OF JES SPOOL FILE !!
+        1 //KC03E62A JOB ,'Ryan',MSGCLASS=H                                       JOB04291
+        2 //STEP1   EXEC  PGM=ASSIST,PARM='MACRO=H'                                       
+        3 //STEPLIB   DD  DSN=KC02293.ASSIST.LOADLIB,DISP=SHR                             
+        4 //SYSPRINT  DD  SYSOUT=*                                                        
+        5 //SYSIN     DD  *                                                               
+        6 //          DD DSN=KC02314.SPRING19.CSCI360.HW9.DRIVER,DISP=SHR                 
+        7 //FT05F001  DD DUMMY                                                            
+        8 //FT06F001  DD SYSOUT=*                                                         
+        9 //                                                                              
+ !! END OF JES SPOOL FILE !!
+ ICH70001I KC03E62  LAST ACCESS AT 19:54:35 ON MONDAY, APRIL 29, 2019
+ IEF236I ALLOC. FOR KC03E62A STEP1
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IEF237I JES2 ALLOCATED TO SYSPRINT
+ IEF237I JES2 ALLOCATED TO SYSIN
+ IGD103I SMS ALLOCATED TO DDNAME
+ IEF237I DMY  ALLOCATED TO FT05F001
+ IEF237I JES2 ALLOCATED TO FT06F001
+ IEF142I KC03E62A STEP1 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02293.ASSIST.LOADLIB                       RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03E62.KC03E62A.JOB04291.D0000102.?         SYSOUT        
+ IEF285I   KC03E62.KC03E62A.JOB04291.D0000101.?         SYSIN         
+ IGD104I KC02314.SPRING19.CSCI360.HW9.DRIVER          RETAINED,  DDNAME=        
+ IEF285I   KC03E62.KC03E62A.JOB04291.D0000103.?         SYSOUT        
+ IEF373I STEP/STEP1   /START 2019119.1954
+ IEF032I STEP/STEP1   /STOP  2019119.1954 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:   584K  SYS:   268K  EXT:        4K  SYS:    11396K
+         ATB- REAL:                     0K  SLOTS:                     0K
+              VIRT- ALLOC:       0M SHRD:       0M
+ IEF375I  JOB/KC03E62A/START 2019119.1954
+ IEF033I  JOB/KC03E62A/STOP  2019119.1954 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+ !! END OF JES SPOOL FILE !!
+1*** ASSIST 4.0/A2-05/15/82  470/V7A/0:OS/VS2  INS=SDFP7/X=BGHO, CHECK/TRC/=1180, OPTS=CDKMPR FROM PENN ST*NIU COMPSCI*LT            
+0MACRO=H                                                                                                                             
+0                                                                                                               PAGE    1            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                       1 ************************************************************                                
+                                       2 *  Program:     ASSIGN9                                                                     
+                                       3 *  Programmer:  Ryan Rickgauer                                                              
+                                       4 ************************************************************                                
+                                       5 * Register usage:                                                                           
+                                       6 *                                                                                           
+                                       7 * 2 Pointer to &FIRST                                                                       
+                                       8 * 3 Pointer to &SECOND                                                                      
+                                       9 ***********************************                                                         
+                                      10          MACRO Start Macro code                                                             
+                                      11          STRCMP &FIRST,&SECOND The macro's name is STRCMP and has 2 pa                      
+                                      12          AIF   ('&FIRST' EQ '').ERROR if the first argument is missing                      
+                                      13          AIF   ('&SECOND' EQ '').ERROR if the second argument is missi                      
+                                      14          STM   2,3,A&SYSNDX Back up the params we wil be using                              
+                                      15          B     B&SYSNDX branch over save area                                               
+                                      16 A&SYSNDX DS    2F Save area                                                                 
+                                      17 B&SYSNDX LA    2,&FIRST Store pointer to first param in R2                                  
+                                      18          LA    3,&SECOND Store pointer to second param in R3                                
+                                      19 C&SYSNDX DS    0H top of comparason loop                                                    
+                                      20          CLC   0(1,2),0(3) check if the current letters are equal                           
+                                      21          BNE   D&SYSNDX If not equal, branch to end of macro                                
+                                      22          CLI   0(2),X'00' check if at end of c-string                                       
+                                      23          BE    D&SYSNDX if true branch to end of macro                                      
+                                      24          LA    2,1(,2) advance pointer                                                      
+                                      25          LA    3,1(,3) advance pointer                                                      
+                                      26          B     C&SYSNDX branch to top of loop                                               
+                                      27 D&SYSNDX DS    0H end of macro lable                                                        
+                                      28          LM    2,3,A&SYSNDX restore the registers used                                      
+                                      29          MEXIT exit macro                                                                   
+                                      30 .ERROR   MNOTE 'Missing Argument'                                                           
+                                      31          MEND end macro code                                                                
+                                      32 **********************************************************************                      
+                                      33 *                                                                    *                      
+                                      34 *  Name:  DRIVER.                                                    *                      
+                                      35 *                                                                    *                      
+                                      36 *  Function:  Test platform for macros.                              *                      
+                                      37 *                                                                    *                      
+                                      38 *  Input:  None.                                                     *                      
+                                      39 *                                                                    *                      
+                                      40 *  Output:  Results of the tests.                                    *                      
+                                      41 *                                                                    *                      
+                                      42 *  Register Usage:                                                   *                      
+                                      43 *        8       Used in calling macros                              *                      
+                                      44 *        9       Used in calling macros                              *                      
+                                      45 *       10       Used in calling macros                              *                      
+                                      46 *       11       Used in calling internal subroutines                *                      
+                                      47 *       12       Base register                                       *                      
+                                      48 *       14       Return address                                      *                      
+                                      49 *                                                                    *                      
+                                      50 **********************************************************************                      
+1                                                                                                               PAGE    2            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                                                                                                                     
+                                                                                                                                     
+                                      52 **********************************************************************                      
+                                      53 *               The DRIVER program begins here.                      *                      
+                                      54 **********************************************************************                      
+                                      55 *                                                                                           
+ 000000                               56 DRIVER   CSECT                         Beginning of the program.                            
+                                      57 *                                                                                           
+                                      59 *                                                                                           
+                                      60 *  Standard entry linkage.                                                                  
+                                      61 *                                                                                           
+ 000000 90EC D00C            0000C    62          STM   14,12,12(13)            Store the registers in the save                      
+                                      63 *                                      area of the calling routine.                         
+                                      64 *                                                                                           
+ 000004 18CF                          65          LR    12,15                   Point register 12 at DRIVER.                         
+ 000000                               66          USING DRIVER,12               The base register is 12.                             
+                                      67 *                                                                                           
+ 000006 41E0 C290            00290    68          LA    14,DRIVSAV              Point register 14 at DRIVER's                        
+                                      69 *                                      save area.                                           
+ 00000A 50DE 0004            00004    70          ST    13,4(14)                Store the backward pointer.                          
+ 00000E 50ED 0008            00008    71          ST    14,8(13)                Store the forward pointer.                           
+ 000012 18DE                          72          LR    13,14                   Point register 13 at DRIVER's                        
+                                      73 *                                      save area.                                           
+                                      74 *                                                                                           
+ 000014 E020 C24C 001E 0024C          75          XPRNT  =CL30'-We will test the STRCMP macro',30                                    
+                                      76 *                                      Print a heading.                                     
+                                      77 *                                                                                           
+ 00001A 4110 C2D8            002D8    78          LA    1,SLIST                                                                      
+                                      79 *                                                                                           
+                                      80 * These first three calls to STRCMP have problems which should                              
+                                      81 * result in MNOTEs.                                                                         
+                                      82 *                                                                                           
+                                      83          STRCMP S1                                                                          
+ ----->AS***MNOTE***    1,Missing Argument                                                                        <-ERROR            
+                                      85 *                                                                                           
+                                      86          STRCMP ,S2                                                                         
+ ----->AS***MNOTE***    1,Missing Argument                                                                        <-ERROR            
+                                      88 *                                                                                           
+                                      89          STRCMP                                                                             
+ ----->AS***MNOTE***    1,Missing Argument                                                                        <-ERROR            
+                                      91 *                                                                                           
+                                      92 * The next group of calls should all work.                                                  
+                                      93 *                                                                                           
+                                      94          STRCMP S1,S1                  Compare "" and ""                                    
+ 00001E 9023 C028            00028    95+         STM   2,3,A0004    Back up the params we wil be using                              
+ 000022 47F0 C030            00030    96+         B     B0004    branch over save area                                               
+ 000028                               97+A0004    DS    2F Save area                                                                 
+ 000030 4120 C2E8            002E8    98+B0004    LA    2,S1     Store pointer to first param in R2                                  
+ 000034 4130 C2E8            002E8    99+         LA    3,S1      Store pointer to second param in R3                                
+ 000038                              100+C0004    DS    0H top of comparason loop                                                    
+ 000038 D500 2000 3000 00000 00000   101+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 00003E 4770 C056            00056   102+         BNE   D0004    If not equal, branch to end of macro                                
+ 000042 9500 2000      00000         103+         CLI   0(2),X'00' check if at end of c-string                                       
+ 000046 4780 C056            00056   104+         BE    D0004    if true branch to end of macro                                      
+ 00004A 4120 2001            00001   105+         LA    2,1(,2) advance pointer                                                      
+ 00004E 4130 3001            00001   106+         LA    3,1(,3) advance pointer                                                      
+ 000052 47F0 C038            00038   107+         B     C0004    branch to top of loop                                               
+1                                                                                                               PAGE    3            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+ 000056                              108+D0004    DS    0H end of macro lable                                                        
+ 000056 9823 C028            00028   109+         LM    2,3,A0004    restore the registers used                                      
+ 00005A D201 C302 C26A 00302 0026A   110          MVC    SVALUE1(2),=CL2'00'                                                         
+ 000060 D201 C312 C26A 00312 0026A   111          MVC    SVALUE2(2),=CL2'00'                                                         
+ 000066 45B0 C33E            0033E   112          BAL    11,SOUT                                                                     
+                                     113 *                                                                                           
+                                     114          STRCMP S1,S2                                                                       
+ 00006A 9023 C074            00074   115+         STM   2,3,A0005    Back up the params we wil be using                              
+ 00006E 47F0 C07C            0007C   116+         B     B0005    branch over save area                                               
+ 000074                              117+A0005    DS    2F Save area                                                                 
+ 00007C 4120 C2E8            002E8   118+B0005    LA    2,S1     Store pointer to first param in R2                                  
+ 000080 4130 C2E9            002E9   119+         LA    3,S2      Store pointer to second param in R3                                
+ 000084                              120+C0005    DS    0H top of comparason loop                                                    
+ 000084 D500 2000 3000 00000 00000   121+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 00008A 4770 C0A2            000A2   122+         BNE   D0005    If not equal, branch to end of macro                                
+ 00008E 9500 2000      00000         123+         CLI   0(2),X'00' check if at end of c-string                                       
+ 000092 4780 C0A2            000A2   124+         BE    D0005    if true branch to end of macro                                      
+ 000096 4120 2001            00001   125+         LA    2,1(,2) advance pointer                                                      
+ 00009A 4130 3001            00001   126+         LA    3,1(,3) advance pointer                                                      
+ 00009E 47F0 C084            00084   127+         B     C0005    branch to top of loop                                               
+ 0000A2                              128+D0005    DS    0H end of macro lable                                                        
+ 0000A2 9823 C074            00074   129+         LM    2,3,A0005    restore the registers used                                      
+ 0000A6 D201 C302 C26A 00302 0026A   130          MVC    SVALUE1(2),=CL2'00'    Compare "" and "BUMP"                                
+ 0000AC D209 C312 C26C 00312 0026C   131          MVC    SVALUE2(10),=CL10'C2E4D4D700'                                               
+ 0000B2 45B0 C33E            0033E   132          BAL    11,SOUT                                                                     
+                                     133 *                                                                                           
+                                     134          STRCMP S3,S2                  Compare "BUMPY" and "BUMP"                           
+ 0000B6 9023 C0C0            000C0   135+         STM   2,3,A0006    Back up the params we wil be using                              
+ 0000BA 47F0 C0C8            000C8   136+         B     B0006    branch over save area                                               
+ 0000C0                              137+A0006    DS    2F Save area                                                                 
+ 0000C8 4120 C2EE            002EE   138+B0006    LA    2,S3     Store pointer to first param in R2                                  
+ 0000CC 4130 C2E9            002E9   139+         LA    3,S2      Store pointer to second param in R3                                
+ 0000D0                              140+C0006    DS    0H top of comparason loop                                                    
+ 0000D0 D500 2000 3000 00000 00000   141+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 0000D6 4770 C0EE            000EE   142+         BNE   D0006    If not equal, branch to end of macro                                
+ 0000DA 9500 2000      00000         143+         CLI   0(2),X'00' check if at end of c-string                                       
+ 0000DE 4780 C0EE            000EE   144+         BE    D0006    if true branch to end of macro                                      
+ 0000E2 4120 2001            00001   145+         LA    2,1(,2) advance pointer                                                      
+ 0000E6 4130 3001            00001   146+         LA    3,1(,3) advance pointer                                                      
+ 0000EA 47F0 C0D0            000D0   147+         B     C0006    branch to top of loop                                               
+ 0000EE                              148+D0006    DS    0H end of macro lable                                                        
+ 0000EE 9823 C0C0            000C0   149+         LM    2,3,A0006    restore the registers used                                      
+ 0000F2 D20B C302 C240 00302 00240   150          MVC    SVALUE1(12),=CL12'C2E4D4D7E800'                                             
+ 0000F8 D209 C312 C26C 00312 0026C   151          MVC    SVALUE2(10),=CL10'C2E4D4D700'                                               
+ 0000FE 45B0 C33E            0033E   152          BAL    11,SOUT                                                                     
+                                     153 *                                                                                           
+                                     154          STRCMP S2,S4                  Compare "BUMP" and "BOMP"                            
+ 000102 9023 C10C            0010C   155+         STM   2,3,A0007    Back up the params we wil be using                              
+ 000106 47F0 C114            00114   156+         B     B0007    branch over save area                                               
+ 00010C                              157+A0007    DS    2F Save area                                                                 
+ 000114 4120 C2E9            002E9   158+B0007    LA    2,S2     Store pointer to first param in R2                                  
+ 000118 4130 C2F4            002F4   159+         LA    3,S4      Store pointer to second param in R3                                
+ 00011C                              160+C0007    DS    0H top of comparason loop                                                    
+ 00011C D500 2000 3000 00000 00000   161+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 000122 4770 C13A            0013A   162+         BNE   D0007    If not equal, branch to end of macro                                
+ 000126 9500 2000      00000         163+         CLI   0(2),X'00' check if at end of c-string                                       
+ 00012A 4780 C13A            0013A   164+         BE    D0007    if true branch to end of macro                                      
+1                                                                                                               PAGE    4            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+ 00012E 4120 2001            00001   165+         LA    2,1(,2) advance pointer                                                      
+ 000132 4130 3001            00001   166+         LA    3,1(,3) advance pointer                                                      
+ 000136 47F0 C11C            0011C   167+         B     C0007    branch to top of loop                                               
+ 00013A                              168+D0007    DS    0H end of macro lable                                                        
+ 00013A 9823 C10C            0010C   169+         LM    2,3,A0007    restore the registers used                                      
+ 00013E D209 C302 C26C 00302 0026C   170          MVC    SVALUE1(10),=CL10'C2E4D4D700'                                               
+ 000144 D209 C312 C276 00312 00276   171          MVC    SVALUE2(10),=CL10'C2D6D4D700'                                               
+ 00014A 45B0 C33E            0033E   172          BAL    11,SOUT                                                                     
+                                     173 *                                                                                           
+                                     174          STRCMP =XL5'C2D6D4C200',S4    Compare "BOMB" and "BOMP"                            
+ 00014E 9023 C158            00158   175+         STM   2,3,A0008    Back up the params we wil be using                              
+ 000152 47F0 C160            00160   176+         B     B0008    branch over save area                                               
+ 000158                              177+A0008    DS    2F Save area                                                                 
+ 000160 4120 C28A            0028A   178+B0008    LA    2,=XL5'C2D6D4C200' Store pointer to first param in R2                        
+ 000164 4130 C2F4            002F4   179+         LA    3,S4      Store pointer to second param in R3                                
+ 000168                              180+C0008    DS    0H top of comparason loop                                                    
+ 000168 D500 2000 3000 00000 00000   181+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 00016E 4770 C186            00186   182+         BNE   D0008    If not equal, branch to end of macro                                
+ 000172 9500 2000      00000         183+         CLI   0(2),X'00' check if at end of c-string                                       
+ 000176 4780 C186            00186   184+         BE    D0008    if true branch to end of macro                                      
+ 00017A 4120 2001            00001   185+         LA    2,1(,2) advance pointer                                                      
+ 00017E 4130 3001            00001   186+         LA    3,1(,3) advance pointer                                                      
+ 000182 47F0 C168            00168   187+         B     C0008    branch to top of loop                                               
+ 000186                              188+D0008    DS    0H end of macro lable                                                        
+ 000186 9823 C158            00158   189+         LM    2,3,A0008    restore the registers used                                      
+ 00018A D209 C302 C280 00302 00280   190          MVC    SVALUE1(10),=CL10'C2D6D4C200'                                               
+ 000190 D209 C312 C276 00312 00276   191          MVC    SVALUE2(10),=CL10'C2D6D4D700'                                               
+ 000196 45B0 C33E            0033E   192          BAL    11,SOUT                                                                     
+                                     193 *                                                                                           
+ 00019A 4180 C2E8            002E8   194          LA     8,S1                                                                        
+                                     195          STRCMP S2,0(8)                Compare "BUMP" and ""                                
+ 00019E 9023 C1A8            001A8   196+         STM   2,3,A0009    Back up the params we wil be using                              
+ 0001A2 47F0 C1B0            001B0   197+         B     B0009    branch over save area                                               
+ 0001A8                              198+A0009    DS    2F Save area                                                                 
+ 0001B0 4120 C2E9            002E9   199+B0009    LA    2,S2     Store pointer to first param in R2                                  
+ 0001B4 4138 0000            00000   200+         LA    3,0(8)    Store pointer to second param in R3                                
+ 0001B8                              201+C0009    DS    0H top of comparason loop                                                    
+ 0001B8 D500 2000 3000 00000 00000   202+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 0001BE 4770 C1D6            001D6   203+         BNE   D0009    If not equal, branch to end of macro                                
+ 0001C2 9500 2000      00000         204+         CLI   0(2),X'00' check if at end of c-string                                       
+ 0001C6 4780 C1D6            001D6   205+         BE    D0009    if true branch to end of macro                                      
+ 0001CA 4120 2001            00001   206+         LA    2,1(,2) advance pointer                                                      
+ 0001CE 4130 3001            00001   207+         LA    3,1(,3) advance pointer                                                      
+ 0001D2 47F0 C1B8            001B8   208+         B     C0009    branch to top of loop                                               
+ 0001D6                              209+D0009    DS    0H end of macro lable                                                        
+ 0001D6 9823 C1A8            001A8   210+         LM    2,3,A0009    restore the registers used                                      
+ 0001DA D209 C302 C26C 00302 0026C   211          MVC    SVALUE1(10),=CL10'C2E4D4D700'                                               
+ 0001E0 D201 C312 C26A 00312 0026A   212          MVC    SVALUE2(2),=CL2'00'                                                         
+ 0001E6 45B0 C33E            0033E   213          BAL    11,SOUT                                                                     
+                                     214 *                                                                                           
+                                     215          STRCMP S3,S3                  Compare "BUMPY" and "BUMPY"                          
+ 0001EA 9023 C1F4            001F4   216+         STM   2,3,A0010    Back up the params we wil be using                              
+ 0001EE 47F0 C1FC            001FC   217+         B     B0010    branch over save area                                               
+ 0001F4                              218+A0010    DS    2F Save area                                                                 
+ 0001FC 4120 C2EE            002EE   219+B0010    LA    2,S3     Store pointer to first param in R2                                  
+ 000200 4130 C2EE            002EE   220+         LA    3,S3      Store pointer to second param in R3                                
+ 000204                              221+C0010    DS    0H top of comparason loop                                                    
+1                                                                                                               PAGE    5            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+ 000204 D500 2000 3000 00000 00000   222+         CLC   0(1,2),0(3) check if the current letters are equal                           
+ 00020A 4770 C222            00222   223+         BNE   D0010    If not equal, branch to end of macro                                
+ 00020E 9500 2000      00000         224+         CLI   0(2),X'00' check if at end of c-string                                       
+ 000212 4780 C222            00222   225+         BE    D0010    if true branch to end of macro                                      
+ 000216 4120 2001            00001   226+         LA    2,1(,2) advance pointer                                                      
+ 00021A 4130 3001            00001   227+         LA    3,1(,3) advance pointer                                                      
+ 00021E 47F0 C204            00204   228+         B     C0010    branch to top of loop                                               
+ 000222                              229+D0010    DS    0H end of macro lable                                                        
+ 000222 9823 C1F4            001F4   230+         LM    2,3,A0010    restore the registers used                                      
+ 000226 D20B C302 C240 00302 00240   231          MVC    SVALUE1(12),=CL12'C2E4D4D7E800'                                             
+ 00022C D20B C312 C240 00312 00240   232          MVC    SVALUE2(12),=CL12'C2E4D4D7E800'                                             
+ 000232 45B0 C33E            0033E   233          BAL    11,SOUT                                                                     
+                                     234 *                                                                                           
+                                     235 *  Standard exit linkage.                                                                   
+                                     236 *                                                                                           
+ 000236 58DD 0004            00004   237          L     13,4(13)                Point register 13 at the calling                     
+                                     238 *                                      program's save area.                                 
+ 00023A 98EC D00C            0000C   239          LM    14,12,12(13)            Restore all registers.                               
+ 00023E 07FE                         240          BR    14                      Return to the calling program.                       
+                                     241 *                                                                                           
+1                                                                                                               PAGE    6            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                                                                                                                     
+                                                                                                                                     
+                                     243 **********************************************************************                      
+                                     244 *          The storage section for DRIVER starts here.               *                      
+                                     245 **********************************************************************                      
+                                     246 *                                                                                           
+                                     247          LTORG                                                                              
+ 000240 C3F2C5F4C4F4C4F7             248                =CL12'C2E4D4D7E800'                                                          
+ 00024C 60E68540A6899393             249                =CL30'-We will test the STRCMP macro'                                        
+ 00026A F0F0                         250                =CL2'00'                                                                     
+ 00026C C3F2C5F4C4F4C4F7             251                =CL10'C2E4D4D700'                                                            
+ 000276 C3F2C4F6C4F4C4F7             252                =CL10'C2D6D4D700'                                                            
+ 000280 C3F2C4F6C4F4C3F2             253                =CL10'C2D6D4C200'                                                            
+ 00028A C2D6D4C200                   254                =XL5'C2D6D4C200'                                                             
+ 000290 FFFFFFFFFFFFFFFF             255 DRIVSAV  DC    18F'-1'                 Save area for linkage.                               
+                                     256 *                                                                                           
+ 0002D8 0000030200000312             257 SLIST    DC    A(SVALUE1,SVALUE2,SRESULT,SLINE)                                             
+                                     258 *                                                                                           
+                                     259 * Storage for testing STRCMP                                                                
+ 0002E8 00                           260 S1       DC    X'00'                                                                        
+ 0002E9 C2E4D4D700                   261 S2       DC    XL5'C2E4D4D700'         "BUMP"                                               
+ 0002EE C2E4D4D7E800                 262 S3       DC    XL6'C2E4D4D7E800'       "BUMPY"                                              
+ 0002F4 C2D6D4D700                   263 S4       DC    XL5'C2D6D4D700'         "BOMP"                                               
+                                     264 *                                                                                           
+ 0002F9 F0                           265 SLINE    DC    C'0'                                                                         
+ 0002FA C396949781998540             266          DC    CL8'Compare '                                                                
+ 000302 4040404040404040             267 SVALUE1  DC    12C' '                                                                       
+ 00030E 40A39640                     268          DC    CL4' to '                                                                    
+ 000312 4040404040404040             269 SVALUE2  DC    12C' '                                                                       
+ 00031E 4081958440A38885             270          DC    CL19' and the result is '                                                    
+ 000331 4040404040404040             271 SRESULT  DC    12C' '                                                                       
+                                     272 *                                                                                           
+1                                                                                                               PAGE    7            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                                                                                                                     
+                                                                                                                                     
+                                     274 **********************************************************************                      
+                                     275 *                                                                                           
+                                     276 * SOUT is an internal subroutine to help print the results of STRCMP.                       
+                                     277 *                                                                                           
+                                     278 * Register 1 : address of the parameter list                                                
+                                     279 *          2 : address of SVALUE1, from 0(1)                                                
+                                     280 *          3 : address of SVALUE2, from 4(1)                                                
+                                     281 *          4 : address of SRESULT, from 8(1)                                                
+                                     282 *          5 : address of SLINE, from 12(1)                                                 
+                                     283 *         11 : return address                                                               
+                                     284 *                                                                                           
+                                     285 **********************************************************************                      
+ 00033E                              286 SOUT     DS    0H                                                                           
+ 00033E 9025 C388            00388   287          STM   2,5,SSAVE               Save registers                                       
+ 000342 9825 1000            00000   288          LM    2,5,0(1)                Unload parameter list                                
+ 000346 4720 C358            00358   289          BC    B'0010',GTHAN                                                                
+ 00034A 4740 C362            00362   290          BC    B'0100',LTHAN                                                                
+ 00034E D20B 4000 C398 00000 00398   291 EQUAL    MVC   0(12,4),=CL12'EQUAL      '                                                   
+ 000354 47F0 C368            00368   292          B     SPRINT                                                                       
+ 000358 D20B 4000 C3A4 00000 003A4   293 GTHAN    MVC   0(12,4),=CL12'GREATER THAN'                                                  
+ 00035E 47F0 C368            00368   294          B     SPRINT                                                                       
+ 000362 D20B 4000 C3B0 00000 003B0   295 LTHAN    MVC   0(12,4),=CL12'LESS THAN   '                                                  
+ 000368 E025 0000 0044 00000         296 SPRINT   XPRNT 0(5),68                 Print the results                                    
+ 00036E D20B 2000 C3BC 00000 003BC   297          MVC   0(12,2),=12C' '         Reset the line                                       
+ 000374 D20B 3000 C3BC 00000 003BC   298          MVC   0(12,3),=12C' '                                                              
+ 00037A D20B 4000 C3BC 00000 003BC   299          MVC   0(12,4),=12C' '                                                              
+ 000380 9825 C388            00388   300          LM    2,5,SSAVE               Restore registers                                    
+ 000384 07FB                         301          BR    11                      Return to caller                                     
+ 000388                              302 SSAVE    DS    4F                                                                           
+1                                                                                                               PAGE    8            
+0  LOC  OBJECT CODE    ADDR1 ADDR2  STMT   SOURCE STATEMENT                                                                          
+                                                                                                                                     
+                                                                                                                                     
+                                     304 *                                                                                           
+                                     305 **********************************************************************                      
+                                     306 *                 The DRIVER program ends here.                      *                      
+                                     307 **********************************************************************                      
+                                     308 *                                                                                           
+                                     309          END   DRIVER                  End of the overall program.                          
+ 000398 C5D8E4C1D3404040             310                =CL12'EQUAL      '                                                           
+ 0003A4 C7D9C5C1E3C5D940             311                =CL12'GREATER THAN'                                                          
+ 0003B0 D3C5E2E240E3C8C1             312                =CL12'LESS THAN   '                                                          
+ 0003BC 4040404040404040             313                =12C' '                                                                      
+0***  NO   STATEMENTS FLAGGED -  NO   WARNINGS,  NO   ERRORS                                                                         
+0*** DYNAMIC CORE AREA USED:  LOW:   17120 HIGH:    1576 LEAVING:  474872 FREE BYTES. AVERAGE:       59 BYTES/STMT ***               
+0*** ASSEMBLY TIME =    0.001 SECS,   314000 STATEMENTS/SEC ***                                                                      
+0*** PROGRAM EXECUTION BEGINNING - ANY OUTPUT BEFORE EXECUTION TIME MESSAGE IS PRODUCED BY USER PROGRAM ***                          
+-We will test the STRCMP macro                                                                                                       
+0Compare 00           to 00           and the result is EQUAL                                                                        
+0Compare 00           to C2E4D4D700   and the result is LESS THAN                                                                    
+0Compare C2E4D4D7E800 to C2E4D4D700   and the result is GREATER THAN                                                                 
+0Compare C2E4D4D700   to C2D6D4D700   and the result is GREATER THAN                                                                 
+0Compare C2D6D4C200   to C2D6D4D700   and the result is LESS THAN                                                                    
+0Compare C2E4D4D700   to 00           and the result is GREATER THAN                                                                 
+0Compare C2E4D4D7E800 to C2E4D4D7E800 and the result is EQUAL                                                                        
+0*** EXECUTION TIME =    0.000 SECS.       256 INSTRUCTIONS EXECUTED -   256000 INSTRUCTIONS/SEC ***                                 
+0*** FIRST CARD NOT READ: NO CARDS READ:FILE UNOPENED                                                                                
+0*** AM004 - NORMAL USER TERMINATION BY RETURN ***                                                                                   
+ !! END OF JES SPOOL FILE !!
