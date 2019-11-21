@@ -461,8 +461,6 @@ if __name__ == '__main__':
           jes.connect()
           outfile = jes.processJob(jclPath, outfile)
 
-          os.system("open -a TextEdit ASSIGN6-output.txt")
-
           if args.postproc == True:
               jes.processJobOutput(outfile)
 
