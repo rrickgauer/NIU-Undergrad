@@ -1,0 +1,107 @@
+1                   J E S 2  J O B  L O G  --  S Y S T E M  2 9 6 4  --  N O D E  S V S C J E S 2        
+0 
+ 20.52.16 JOB02183 ---- FRIDAY,    30 AUG 2019 ----
+ 20.52.16 JOB02183  IRR010I  USERID KC03EA4  IS ASSIGNED TO THIS JOB.
+ 20.52.16 JOB02183  ICH70001I KC03EA4  LAST ACCESS AT 20:29:37 ON FRIDAY, AUGUST 30, 2019
+ 20.52.16 JOB02183  $HASP373 KC03EA4A STARTED - INIT 2    - CLASS A        - SYS 2964
+ 20.52.17 JOB02183  -                                      -----TIMINGS (MINS.)------                          -----PAGING COUNTS----
+ 20.52.17 JOB02183  -STEPNAME PROCSTEP    RC   EXCP   CONN       TCB       SRB  CLOCK          SERV  WORKLOAD  PAGE  SWAP   VIO SWAPS
+ 20.52.17 JOB02183  -JSTEP01              00      4      1       .00       .00     .0                BATCH        0     0     0     0
+ 20.52.17 JOB02183  -JSTEP02              00      2      0       .00       .00     .0                BATCH        0     0     0     0
+ 20.52.17 JOB02183  -KC03EA4A ENDED.  NAME-Rickgauer            TOTAL TCB CPU TIME=      .00 TOTAL ELAPSED TIME=    .0
+ 20.52.17 JOB02183  $HASP395 KC03EA4A ENDED - RC=0000
+0------ JES2 JOB STATISTICS ------
+-  30 AUG 2019 JOB EXECUTION DATE
+-           53 CARDS READ
+-          110 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           13 SYSOUT SPOOL KBYTES
+-         0.01 MINUTES EXECUTION TIME
+ !! END OF JES SPOOL FILE !!
+        1 //KC03EA4A JOB ,'Rickgauer',MSGCLASS=H                                  JOB02183
+          //*                                                                     00020001
+          //************************************************************          00030001
+          //* *                                                                   00040001
+          //* CSCI 465/565   FALL 2019 *                                          00050001
+          //* *                                                                   00060001
+          //* ASSIGNMENT 1   COPY AND EXECUTE JCL *                               00070001
+          //* *                                                                   00080001
+          //* PROGRAMMER: Ryan Rickgauer *                                        00090001
+          //* *                                                                   00100001
+          //* DUE DATE: 08/30/2019 *                                              00110001
+          //* DUE TIME: 11:59 PM *                                                00120001
+          //* *                                                                   00130001
+          //* The purpose of this job is to allocate a new PDSE, or *             00140001
+          //* partitioned data set extended, that holds load modules. *           00150001
+          //* There are two job steps, both running IEFBR14. The *                00160001
+          //* first will delete any possible previous version of the *            00170001
+          //* PDSE named KC0nnnn.CSCI465.LOADLIB. The second creates *            00180001
+          //* a new PDSE of the same name. IEFBR14 is one of the *                00190001
+          //* most used of all the IBM utilities available. *                     00200001
+          //* IEFBR14's source module consists only of a CSECT with *             00210001
+          //* a single BR 14 instruction and really accomplishes *                00220001
+          //* really nothing as a stand-alone program BUT, as we *                00230001
+          //* will soon find out, it has MANY uses for allocating *               00240001
+          //* (creating), cataloging, deleting, and un-cataloging *               00250001
+          //* data sets. In this two-step job, you are simply *                   00260001
+          //* executing IEFBR14 twice. The first step deletes any *               00270001
+          //* previously-created PDSE that might exist from a prior *             00280001
+          //* successful run of the job and the second allocates, or *            00290001
+          //* creates a new one. This PDSE is the second of the *                 00300001
+          //* three PDSEs that we will need this semester. *                      00310001
+          //************************************************************          00320001
+          //*                                                                     00330001
+        2 //JSTEP01 EXEC PGM=IEFBR14                                              00340001
+          //*                                                                     00350001
+          //* The following DD card deletes an existing PDSE if it                00360001
+          //* already exists. If it does not exist, the data set is               00370001
+          //* first allocated and then immediately deleted.                       00380001
+          //*                                                                     00390001
+        3 //DD1 DD DSN=KC03EA4.CSCI465.LOADLIB,                                   00400002
+          // SPACE=(TRK,(1,1,1)),                                                 00410001
+          // DISP=(MOD,DELETE,DELETE)                                             00420001
+          //*                                                                     00430001
+        4 //JSTEP02 EXEC PGM=IEFBR14                                              00440001
+          //*                                                                     00450001
+          //* The following DD card allocates a PDSE to hold your                 00460001
+          //* program load module files.                                          00470001
+          //*                                                                     00480001
+        5 //DD1 DD DSN=KC03EA4.CSCI465.LOADLIB,                                   00490002
+          // DCB=(RECFM=U,LRECL=0,BLKSIZE=4096),                                  00500001
+          // DSNTYPE=LIBRARY,                                                     00510001
+          // SPACE=(CYL,(9,5,5)),                                                 00520001
+          // DISP=(NEW,KEEP,DELETE)                                               00530001
+ !! END OF JES SPOOL FILE !!
+ ICH70001I KC03EA4  LAST ACCESS AT 20:29:37 ON FRIDAY, AUGUST 30, 2019
+ IEFA111I KC03EA4A IS USING THE FOLLOWING JOB RELATED SETTINGS:
+          SWA=ABOVE,TIOT SIZE=32K,DSENQSHR=DISALLOW,GDGBIAS=JOB
+ IEF236I ALLOC. FOR KC03EA4A JSTEP01
+ IGD101I SMS ALLOCATED TO DDNAME (DD1     )
+         DSN (KC03EA4.CSCI465.LOADLIB                     )
+         STORCLAS (PRIM90) MGMTCLAS (DEFAULT) DATACLAS (        )
+         VOL SER NOS= KCTR06                                                                
+ IEF142I KC03EA4A JSTEP01 - STEP WAS EXECUTED - COND CODE 0000
+ IGD105I KC03EA4.CSCI465.LOADLIB                      DELETED,   DDNAME=DD1     
+ IEF373I STEP/JSTEP01 /START 2019242.2052
+ IEF032I STEP/JSTEP01 /STOP  2019242.2052 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:     4K  SYS:   224K  EXT:        0K  SYS:    11452K
+         ATB- REAL:                  4128K  SLOTS:                     0K
+              VIRT- ALLOC:      13M SHRD:       0M
+ IEF236I ALLOC. FOR KC03EA4A JSTEP02
+ IGD101I SMS ALLOCATED TO DDNAME (DD1     )
+         DSN (KC03EA4.CSCI465.LOADLIB                     )
+         STORCLAS (PRIM90) MGMTCLAS (DEFAULT) DATACLAS (        )
+         VOL SER NOS= KCTR30                                                                
+ IEF142I KC03EA4A JSTEP02 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC03EA4.CSCI465.LOADLIB                      RETAINED,  DDNAME=DD1     
+ IEF373I STEP/JSTEP02 /START 2019242.2052
+ IEF032I STEP/JSTEP02 /STOP  2019242.2052 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:     4K  SYS:   220K  EXT:        0K  SYS:    11480K
+         ATB- REAL:                  4128K  SLOTS:                     0K
+              VIRT- ALLOC:      13M SHRD:       0M
+ IEF375I  JOB/KC03EA4A/START 2019242.2052
+ IEF033I  JOB/KC03EA4A/STOP  2019242.2052 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+ !! END OF JES SPOOL FILE !!

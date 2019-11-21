@@ -1,0 +1,179 @@
+//KC03EA4A JOB ,'Rickgauer',MSGCLASS=H
+//*
+//************************************************************
+//*                                                          *
+//*  CSCI 465/565 - Fall 2019                                *
+//*                                                          *
+//*  ASSIGNMENT 3A                                           *
+//*                                                          *
+//*  PROGRAMMER:  Ryan Rickgauer                             *
+//*  DUE DATE:  9/23/19                                      *
+//*  DUE TIME:  11:59PM                                      *
+//*                                                          *
+//************************************************************
+//*
+//************************************************************
+//* FUNCTION: TO COMPILE PROGRAM WRITTEN                     *
+//* INPUT:    ASSEMBLER CODE                                 *
+//* OUTPUT:   NONE                                           *
+//* ENTRY CONDITIONS: NONE                                   *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES:  TAKES ASSEMBLER CODE AND CONTACTS COMPILER       *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//***********************************************************
+//*  JSTEP01                                                *
+//***********************************************************
+//*
+//JSTEP01  EXEC PGM=ASMA90,PARM=ASA
+//*
+//SYSLIB   DD DSN=SYS1.MACLIB,DISP=SHR
+//*
+//SYSIN    DD *
+         PRINT  NOGEN                MACRO CALL SUPPRESSION
+ASMPGM3  CSECT                       BEGIN ASMPGM3
+*
+         STM   14,12,12(13)          SAVE CALLER'S REGS
+         LR    12,15                 SET R12 TO R15
+         USING ASMPGM3,12            ESTABLISH R12 AS 1ST BASE REG
+         LA    14,REGS               R14 -> CURRENT SAVE AREA
+         ST    13,4(,14)             SAVE CALLER'S SAVE AREA ADDR
+         ST    14,8(,14)             SAVE CURRENT SAVE AREA ADDR
+         LR    13,14                 R13 -> CURRENT SAVE AREA
+*
+         OPEN  (INDCB,(INPUT))       OPEN INPUT FILE
+         LTR   15,15                 CHECK FOR SUCCESSFUL OPEN
+         BZ    OPENOK1               BRANCH IF SUCCESSFUL TO OPENOK1
+         ABEND 333,DUMP              ABEND IF OPEN FAILS & DISPLAY 333
+*
+OPENOK1  OPEN  (OUTDCB,(OUTPUT))     OPEN OUTPUT FILE
+         LTR   15,15                 CHECK FOR SUCCESSFUL OPEN
+         BZ    OPENOK2               BRANCH IF SUCCESSFUL TO OPENOK2
+         ABEND 444,DUMP              ABEND IF OPEN FAILS & DISPLAY 444
+*
+OPENOK2  GET   INDCB,INRECORD        READ THE FIRST RECORD
+*
+LOOP1    CLI   EOFFLAG,C'Y'          CHECK FOR END OF INPUT DATA
+*
+         BE    ENDLOOP1              BRANCH TO ENDLOOP1 IF EOF
+*
+         MVC   OUTDATA(80),INRECORD  MOVE FROM INPUT DATA TO PRINT
+         PUT   OUTDCB,PRINTLN        WRITE THE PRINT DATA
+*
+         GET   INDCB,INRECORD        GET THE NEXT RECORD
+*
+         B     LOOP1                 BRANCH TO TOP OF LOOP1
+*
+ENDLOOP1 CLOSE (INDCB,,OUTDCB)       CLOSE THE TWO DCBs
+*
+         L     13,4(,13)             R13 -> CALLER'S SAVE AREA
+         L     14,12(,13)            RESTORE R14
+         LM    0,12,20(13)           RESTORE R0 THROUGH R12
+*
+         BR    14                    RETURN TO CALLER
+*
+         LTORG                       LTORG TO ORGANIZE LITERALS
+*
+         ORG   ASMPGM3+((*-ASMPGM3+31)/32)*32
+         DC    C'HERE IS THE STORAGE FOR: ASMPGM3'
+*
+REGS     DC    18F'0'                MAINREGS FOR STANDARD LINKAGE
+*
+INRECORD DC    80C'@'                INPUT BUFFER FILL WITH '@'
+*
+PRINTLN  DC    CL1' '                PRINTLN CARRIAGE CONTROL
+OUTDATA  DC    80C' '                80 BYTE STORAGE FOR PRINTING
+         DC    52C' '                FILLER FOR PRINT RECORD
+*
+*  INPUT DCB
+*
+INDCB    DCB   DDNAME=ASMIN,                                           X
+               DEVD=DA,                                                X
+               DSORG=PS,                                               X
+               MACRF=GM,                                               X
+               RECFM=FB,                                               X
+               LRECL=80,                                               X
+               EODAD=EOFRTN
+*
+*  INPUT DCB'S EOF FLAG AND EOF ROUTINE
+*
+EOFFLAG  DC    C'N'                  EOFFLAG FOR INPUT FILE
+*
+EOFRTN   MVI   EOFFLAG,C'Y'          SET EOF FLAG TO Y
+         BR    14                    BRANCH TO STMT FOLLOWING GET
+*
+*  OUTPUT DCB
+*
+OUTDCB   DCB   DDNAME=ASMOUT,                                          X
+               DEVD=DA,                                                X
+               DSORG=PS,                                               X
+               MACRF=PM,                                               X
+               RECFM=FBA,                                              X
+               LRECL=133,                                              X
+               BLKSIZE=133
+*
+         END   ASMPGM3
+/*
+//*
+//SYSLIN   DD DSN=&&OBJMOD,SPACE=(CYL,(1,1)),
+//            DISP=(NEW,PASS)
+//*
+//SYSUT1   DD SPACE=(CYL,(10,5))
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//************************************************************
+//* FUNCTION: LINKAGE EDITOR                                 *
+//* INPUT:    OBJMOD                                         *
+//* OUTPUT:   NONE                                           *
+//* ENTRY CONDITIONS: CHECKS THAT RETURN CODE IS 0           *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES: PASSES TEMPORARY OBJECT                           *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//***************************************************************
+//*    JSTEP02 - LINKAGE EDITOR                                 *
+//***************************************************************
+//*
+//JSTEP02   EXEC PGM=HEWL,PARM='MAP,LET',COND=(0,LT)
+//*
+//SYSLIB    DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN    DD DSN=&&OBJMOD,DISP=(OLD,DELETE)
+//*
+//SYSLMOD   DD DSN=KC03EA4.CSCI465.LOADLIB(ASMPGM3),
+//             DISP=(MOD,KEEP,KEEP)
+//*
+//*
+//SYSPRINT  DD SYSOUT=*
+//*
+//SYSUT1    DD SPACE=(TRK,(10,10))
+//*
+//************************************************************
+//* FUNCTION: PROGRAM FETCH                                  *
+//* INPUT:    ASMIN                                          *
+//* OUTPUT:   ASMOUT                                         *
+//* ENTRY CONDITIONS: CHECKS RETURN CODE                     *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES: DISPLAYS RESULTS OF PROGRAM                       *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//****************************************************************
+//*   JSTEP03 = PROGRAM FETCH STEP                               *
+//****************************************************************
+//*
+//JSTEP03    EXEC PGM=ASMPGM3,COND=(0,LT)
+//*
+//STEPLIB    DD DSN=KC03EA4.CSCI465.LOADLIB,DISP=SHR
+//*
+//ASMIN      DD DSN=KC02322.CSCI465.DATAFA19(DATA3),DISP=SHR
+//*
+//ASMOUT     DD SYSOUT=*
+//*
+//PRINTOUT   DD SYSOUT=*
+//*
+//SYSUDUMP   DD SYSOUT=*
+//

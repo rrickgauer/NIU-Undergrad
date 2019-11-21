@@ -1,0 +1,54 @@
+//KC03EA4A JOB ,'Rickgauer',MSGCLASS=H                                  00010001
+//*                                                                     00020001
+//************************************************************          00030001
+//* *                                                                   00040001
+//* CSCI 465/565   FALL 2019 *                                          00050001
+//* *                                                                   00060001
+//* ASSIGNMENT 1   COPY AND EXECUTE JCL *                               00070001
+//* *                                                                   00080001
+//* PROGRAMMER: Ryan Rickgauer *                                        00090001
+//* *                                                                   00100001
+//* DUE DATE: 08/30/2019 *                                              00110001
+//* DUE TIME: 11:59 PM *                                                00120001
+//* *                                                                   00130001
+//* The purpose of this job is to allocate a new PDSE, or *             00140001
+//* partitioned data set extended, that holds load modules. *           00150001
+//* There are two job steps, both running IEFBR14. The *                00160001
+//* first will delete any possible previous version of the *            00170001
+//* PDSE named KC0nnnn.CSCI465.LOADLIB. The second creates *            00180001
+//* a new PDSE of the same name. IEFBR14 is one of the *                00190001
+//* most used of all the IBM utilities available. *                     00200001
+//* IEFBR14's source module consists only of a CSECT with *             00210001
+//* a single BR 14 instruction and really accomplishes *                00220001
+//* really nothing as a stand-alone program BUT, as we *                00230001
+//* will soon find out, it has MANY uses for allocating *               00240001
+//* (creating), cataloging, deleting, and un-cataloging *               00250001
+//* data sets. In this two-step job, you are simply *                   00260001
+//* executing IEFBR14 twice. The first step deletes any *               00270001
+//* previously-created PDSE that might exist from a prior *             00280001
+//* successful run of the job and the second allocates, or *            00290001
+//* creates a new one. This PDSE is the second of the *                 00300001
+//* three PDSEs that we will need this semester. *                      00310001
+//************************************************************          00320001
+//*                                                                     00330001
+//JSTEP01 EXEC PGM=IEFBR14                                              00340001
+//*                                                                     00350001
+//* The following DD card deletes an existing PDSE if it                00360001
+//* already exists. If it does not exist, the data set is               00370001
+//* first allocated and then immediately deleted.                       00380001
+//*                                                                     00390001
+//DD1 DD DSN=KC03EA4.CSCI465.LOADLIB,                                   00400002
+// SPACE=(TRK,(1,1,1)),                                                 00410001
+// DISP=(MOD,DELETE,DELETE)                                             00420001
+//*                                                                     00430001
+//JSTEP02 EXEC PGM=IEFBR14                                              00440001
+//*                                                                     00450001
+//* The following DD card allocates a PDSE to hold your                 00460001
+//* program load module files.                                          00470001
+//*                                                                     00480001
+//DD1 DD DSN=KC03EA4.CSCI465.LOADLIB,                                   00490002
+// DCB=(RECFM=U,LRECL=0,BLKSIZE=4096),                                  00500001
+// DSNTYPE=LIBRARY,                                                     00510001
+// SPACE=(CYL,(9,5,5)),                                                 00520001
+// DISP=(NEW,KEEP,DELETE)                                               00530001
+//                                                                      00540001

@@ -1,0 +1,137 @@
+1                   J E S 2  J O B  L O G  --  S Y S T E M  2 9 6 4  --  N O D E  S V S C J E S 2        
+0 
+ 20.15.37 JOB00135 ---- THURSDAY,  12 SEP 2019 ----
+ 20.15.37 JOB00135  IRR010I  USERID KC03EA4  IS ASSIGNED TO THIS JOB.
+ 20.15.38 JOB00135  ICH70001I KC03EA4  LAST ACCESS AT 20:14:54 ON THURSDAY, SEPTEMBER 12, 2019
+ 20.15.38 JOB00135  $HASP373 KC03EA4A STARTED - INIT 2    - CLASS A        - SYS 2964
+ 20.15.39 JOB00135  -                                      -----TIMINGS (MINS.)------                          -----PAGING COUNTS----
+ 20.15.39 JOB00135  -STEPNAME PROCSTEP    RC   EXCP   CONN       TCB       SRB  CLOCK          SERV  WORKLOAD  PAGE  SWAP   VIO SWAPS
+ 20.15.39 JOB00135  -JSTEP01              00     37     19       .00       .00     .0             3  BATCH        0     0     0     0
+ 20.15.39 JOB00135  -JSTEP02              00     32      1       .00       .00     .0             2  BATCH        0     0     0     0
+ 20.15.39 JOB00135  -KC03EA4A ENDED.  NAME-Rickgauer            TOTAL TCB CPU TIME=      .00 TOTAL ELAPSED TIME=    .0
+ 20.15.39 JOB00135  $HASP395 KC03EA4A ENDED - RC=0000
+0------ JES2 JOB STATISTICS ------
+-  12 SEP 2019 JOB EXECUTION DATE
+-           60 CARDS READ
+-          139 SYSOUT PRINT RECORDS
+-            0 SYSOUT PUNCH RECORDS
+-           14 SYSOUT SPOOL KBYTES
+-         0.01 MINUTES EXECUTION TIME
+ !! END OF JES SPOOL FILE !!
+        1 //KC03EA4A JOB ,'Rickgauer',MSGCLASS=H                                  JOB00135
+          //************************************************************                  
+          //*                                                          *                  
+          //*  CSCI 465/565 - Fall 2019                                *                  
+          //*                                                          *                  
+          //*  ASSIGNMENT 2                                            *                  
+          //*                                                          *                  
+          //*  PROGRAMMER:  Ryan Rickgauer                             *                  
+          //*                                                          *                  
+          //*  DUE DATE:  9/11/2019                                    *                  
+          //*  DUE TIME:  11:59PM                                      *                  
+          //*                                                          *                  
+          //*  THE PURPOSE OF THIS PROGRAM IS TO FETCH AND EXECUTE A   *                  
+          //*  PROGRAM USING JCL                                       *                  
+          //************************************************************                  
+          //*                                                                             
+          //*                                                                             
+          //*                                                                             
+        2 //JSTEP01 EXEC PGM=READDATA                                                     
+        3 //STEPLIB DD DSN=KC02322.CSCI465.LOADLIB,DISP=SHR                               
+          //************************************************************                  
+          //*                                                          *                  
+          //*  JSTEP01 FETCHES AND EXECUTES A PROGRAM OBJECT           *                  
+          //*                                                          *                  
+          //*  DDNAME              DESCRIPTION                         *                  
+          //*  ------------------------------------------------------  *                  
+          //*  STEPLIB    INPUT:   LOCATION OF COMPILER                *                  
+          //*  RECSIN1    INPUT:   SOURCE CODE TO BE COMPILED          *                  
+          //*                                                          *                  
+          //*  RECSOUT1  OUTPUT:   RESULTING OBJECT MODULE             *                  
+          //*  SYSUDUMP  OUTPUT:   OUTPUT INCASE OF ADBEND             *                  
+          //*                                                          *                  
+          //************************************************************                  
+          //*                                                                             
+        4 //RECSIN1 DD DSN=KC02322.CSCI465.DATAFA19(DATA2),DISP=SHR                       
+        5 //RECSOUT1 DD DSN=&&TEMP,SPACE=(TRK,(10,10)),DISP=(NEW,PASS,KEEP),              
+          //            DCB=(LRECL=80,BLKSIZE=880,RECFM=FB)                               
+        6 //SYSUDUMP DD SYSOUT=*                                                          
+          //*                                                                             
+          //*                                                                             
+          //*                                                                             
+        7 //JSTEP02 EXEC PGM=RPTDATA,COND=(0,LT)                                          
+        8 //STEPLIB DD DSN=KC02322.CSCI465.LOADLIB,DISP=SHR                               
+          //************************************************************                  
+          //*                                                          *                  
+          //*  JSTEP02 READS THE RECORDS FROM THE TEMPORARY DATA SET   *                  
+          //*  PASSED FROM JSTEP01                                     *                  
+          //*                                                          *                  
+          //*  DDNAME              DESCRIPTION                         *                  
+          //*  ------------------------------------------------------  *                  
+          //*  STEPLIB    INPUT:   LOCATION OF COMPILER                *                  
+          //*  RECSIN2    INPUT:   OBJECT MODULE FROM STEP1            *                  
+          //*                                                          *                  
+          //*  RECSOUT2  OUTPUT:   OUTPUT FROM EXECUTION               *                  
+          //*  SYSUDUMP  OUTPUT:   OUTPUT INCASE OF ADBEND             *                  
+          //*                                                          *                  
+          //************************************************************                  
+        9 //RECSIN2 DD DSN=&&TEMP,DISP=(OLD,PASS,KEEP)                                    
+       10 //RECSOUT2 DD SYSOUT=*                                                          
+       11 //SYSUDUMP DD SYSOUT=*                                                          
+ !! END OF JES SPOOL FILE !!
+ ICH70001I KC03EA4  LAST ACCESS AT 20:14:54 ON THURSDAY, SEPTEMBER 12, 2019
+ IEFA111I KC03EA4A IS USING THE FOLLOWING JOB RELATED SETTINGS:
+          SWA=ABOVE,TIOT SIZE=32K,DSENQSHR=DISALLOW,GDGBIAS=JOB
+ IEF236I ALLOC. FOR KC03EA4A JSTEP01
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IGD103I SMS ALLOCATED TO DDNAME RECSIN1
+ IGD101I SMS ALLOCATED TO DDNAME (RECSOUT1)
+         DSN (SYS19255.T201538.RA000.KC03EA4A.TEMP.H01    )
+         STORCLAS (TEMPSC) MGMTCLAS (        ) DATACLAS (        )
+         VOL SER NOS= TEMP00                                                                
+ IEF237I JES2 ALLOCATED TO SYSUDUMP
+ IEF142I KC03EA4A JSTEP01 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02322.CSCI465.LOADLIB                      RETAINED,  DDNAME=STEPLIB 
+ IGD104I KC02322.CSCI465.DATAFA19                     RETAINED,  DDNAME=RECSIN1 
+ IGD106I SYS19255.T201538.RA000.KC03EA4A.TEMP.H01     PASSED,    DDNAME=RECSOUT1
+ IEF285I   KC03EA4.KC03EA4A.JOB00135.D0000101.?         SYSOUT        
+ IEF373I STEP/JSTEP01 /START 2019255.2015
+ IEF032I STEP/JSTEP01 /STOP  2019255.2015 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:    88K  SYS:   268K  EXT:     2592K  SYS:    11772K
+         ATB- REAL:                  4116K  SLOTS:                     0K
+              VIRT- ALLOC:      11M SHRD:       0M
+ IEF236I ALLOC. FOR KC03EA4A JSTEP02
+ IGD103I SMS ALLOCATED TO DDNAME STEPLIB
+ IGD103I SMS ALLOCATED TO DDNAME RECSIN2
+ IEF237I JES2 ALLOCATED TO RECSOUT2
+ IEF237I JES2 ALLOCATED TO SYSUDUMP
+ IEF142I KC03EA4A JSTEP02 - STEP WAS EXECUTED - COND CODE 0000
+ IGD104I KC02322.CSCI465.LOADLIB                      RETAINED,  DDNAME=STEPLIB 
+ IEF285I   KC03EA4.KC03EA4A.JOB00135.D0000102.?         SYSOUT        
+ IEF285I   KC03EA4.KC03EA4A.JOB00135.D0000103.?         SYSOUT        
+ IEF373I STEP/JSTEP02 /START 2019255.2015
+ IEF032I STEP/JSTEP02 /STOP  2019255.2015 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+         VIRT:    92K  SYS:   268K  EXT:     2588K  SYS:    11772K
+         ATB- REAL:                  4116K  SLOTS:                     0K
+              VIRT- ALLOC:      11M SHRD:       0M
+ IGD103I SMS ALLOCATED TO DDNAME SYS00001
+ IGD104I SYS19255.T201539.RA000.KC03EA4A.R0173326     RETAINED,  DDNAME=SYS00001
+ IGD105I SYS19255.T201538.RA000.KC03EA4A.TEMP.H01     DELETED,   DDNAME=RECSIN2 
+ IEF375I  JOB/KC03EA4A/START 2019255.2015
+ IEF033I  JOB/KC03EA4A/STOP  2019255.2015 
+         CPU:     0 HR  00 MIN  00.00 SEC    SRB:     0 HR  00 MIN  00.00 SEC    
+ !! END OF JES SPOOL FILE !!
+0QUOTATIONS FROM TWO IMPORTANT AMERICAN HISTORICAL DOCUMENTS      FALL 2019                                                          
+0"We hold these truths to be self-evident, that all men are created                                                                  
+0equal, that they are endowed by their Creator with certain unalienable                                                              
+0Rights, that among these are Life, Liberty and the pursuit of                                                                       
+0Happiness." -- Declaration of Independence, 1776                                                                                    
+0"We the People of the United States, in Order to form a more perfect                                                                
+0Union, establish Justice, insure domestic Tranquility, provide for the                                                              
+0common defence, promote the general Welfare, and secure the Blessings                                                               
+0of Liberty to ourselves and our Posterity, do ordain and establish this                                                             
+0Constitution of the United States of America." -- Preamble to the U.S.                                                              
+0Constitution, 1789                                                                                                                  
+ !! END OF JES SPOOL FILE !!

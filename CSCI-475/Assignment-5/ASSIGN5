@@ -1,0 +1,678 @@
+//KC03EA4A JOB ,'RICKGAUER',MSGCLASS=H
+//*
+//**********************************************************
+//*                                                        *
+//* CSCI 465 - FALL 2019                                   *
+//*                                                        *
+//* ASSIGNMENT: 5                                          *
+//*                                                        *
+//* PROGRAMERS: Ryan Rickgauer                             *
+//*                                                        *
+//* DUE DATE: 10/21/2019                                   *
+//* DUE TIME: 11:59 PM                                     *
+//*                                                        *
+//* PURPOSE: COBOL PROGRAM THAT CREATES 2 REPORTS THAT     *
+//*          PRINT TO THE SAME DD SYSOUT=*                 *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP01  EXEC PGM=IGYCRCTL,PARM='FLAG(I,I),APOST',REGION=0M
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP01: COBOL COMPILER (IGYCRCTL)                     *
+//*                                                        *
+//* PARAMETERS: 'FLAG(I,I),APOST'                          *
+//* CONDITIONS: NONE                                       *
+//*                                                        *
+//* DDNAME:            FILE DESCRIPTION:                   *
+//*                                                        *
+//* SYSIN       INPUT: IN STREAM SOURCE CODE               *
+//* STEPLIB     INPUT: LOAD LIBRARY                        *
+//*                                                        *
+//* SYSLIN     OUTPUT: RESULTING OBJECT MODULE             *
+//* SYSPRINT   OUTPUT: COMPILER MESSAGES                   *
+//*                                                        *
+//* SYSUT1-7  UTILITY: COMPILER SCRATCH PAD                *
+//**********************************************************
+//*
+//SYSMDECK DD SPACE=(CYL,(1,1))
+//SYSUT1   DD SPACE=(CYL,(1,1))
+//SYSUT2   DD SPACE=(CYL,(1,1))
+//SYSUT3   DD SPACE=(CYL,(1,1))
+//SYSUT4   DD SPACE=(CYL,(1,1))
+//SYSUT5   DD SPACE=(CYL,(1,1))
+//SYSUT6   DD SPACE=(CYL,(1,1))
+//SYSUT7   DD SPACE=(CYL,(1,1))
+//SYSUT8   DD SPACE=(CYL,(1,1))
+//SYSUT9   DD SPACE=(CYL,(1,1))
+//SYSUT10  DD SPACE=(CYL,(1,1))
+//SYSUT11  DD SPACE=(CYL,(1,1))
+//SYSUT12  DD SPACE=(CYL,(1,1))
+//SYSUT13  DD SPACE=(CYL,(1,1))
+//SYSUT14  DD SPACE=(CYL,(1,1))
+//SYSUT15  DD SPACE=(CYL,(1,1))
+//*
+//SYSIN    DD *
+      ****************************************************************
+      *                                                              *
+      * PROGRAM NAME: COBPGM5                                        *
+      *                                                              *
+      * FUNCTION: THIS PROGRAM CREATES TWO BAND ORCHESTRA ENDOWMENT  *
+      *           REPORTS WRITTEN TO THE SAME DD SYSOUT=*            *
+      *                                                              *
+      * ENTRY CONDITIONS: NONE                                       *
+      *                                                              *
+      * EXIT CONDITIONS:  NONE                                       *
+      *                                                              *
+      * INPUT: INFILE - THE INPUT DATA RECORDS READ IN.              *
+      *        LOWFILE - THE INPUT DATA FOR THE 2ND REPORT           *
+      *                                                              *
+      * OUTPUT: OUTFILE - THE INPUT DATA RECORDS WRITTEN OUT.        *
+      *                                                              *
+      ****************************************************************
+
+       IDENTIFICATION DIVISION.
+
+       PROGRAM-ID.    COBPGM5.
+       AUTHOR.        RYAN RICKGAUER.
+       DATE-WRITTEN.  10/23/2019.
+       DATE-COMPILED. 10/23/2019.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT INPUT-FILE ASSIGN TO INFILE.
+           SELECT OUTPUT-FILE ASSIGN TO OUTFILE.
+           SELECT LOW-FILE ASSIGN TO LOWFILE.
+
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       FD  INPUT-FILE RECORDING MODE IS F.
+
+       01  INPUT-RECORD                         PIC X(80).
+
+       FD  OUTPUT-FILE RECORDING MODE IS F.
+
+       01  OUTPUT-RECORD                        PIC X(132).
+
+       FD  LOW-FILE RECORDING MODE IS F.
+
+       01  LE-OUTPUT-RECORD                     PIC X(132).
+
+       WORKING-STORAGE SECTION.
+
+      *******************************************************
+      * VARIABLES USED                                      *
+      *                                                     *
+      * EOF-FLAG-1: END OF FILE FLAG                        *
+      * EOF-FLAG-2: END OF FILE FLAG                        *
+      *                                                     *
+      * IN-INST-RECORD: INSTITUTION INFORMATION RECORD      *
+      *                                                     *
+      * CAP-GAINS-PCT-1: CAPITAL GAINS PERCENTAGE 1         *
+      * CAP-GAINS-PCT-2: CAPITAL GAINS PERCENTAGE 2         *
+      * CAP-GAINS-PCT-3: CAPITAL GAINS PERCENTAGE 3         *
+      * CAP-GAINS-PCT-4: CAPITAL GAINS PERCENTAGE 4         *
+      *                                                     *
+      * TRAN-TYPE-D: DEPOSIT TRANSACTION OUTPUT             *
+      * TRAN-TYPE-W: WITHDRAWAL TRANSACTION OUTPUT          *
+      * TRAN-TYPE-C: CAPITAL GAINS TRANSACTION OUTPUT       *
+      *                                                     *
+      * SALES-INPUT-RECORD: INPUT RECORDS READ FROM INPUT   *
+      * PRINT-LINE: LINE THAT WRITES TO OUTPUT FILE         *
+      *                                                     *
+      * ENDOWMT-AMT: CURRENT ENDOWMENT AMOUNT FROM INPUT    *
+      * ENDOWMT-CHG-AMT: CHANGE TO THE ENDOWMENT            *
+      * NEW-ENDOWMT-AMT: UPDATED ENDOWMENT AMOUNT           *
+      *                                                     *
+      * TOTAL-ENDOWMT-AMT: SUM OF ALL ENDOWMENTS            *
+      * TOTAL-ENDOWMT-CHG-AMT: SUM OF ALL ENDOWMENT CHANGES *
+      * TOTAL-NEW-ENDOWMT-AMT: SUM OF ALL NEW ENDOWMENTS    *
+      *                                                     *
+      * TRAN-CTR: NUMBER OF ENDOWMENT RECORDS               *
+      * AVG-ENDOWMT-AMT: AVERAGE ENDOWMENT AMOUNT           *
+      * AVG-ENDOWMT-CHG-AMT: AVEREGE ENDOWMENT CHANGE AMT   *
+      * AVG-NEW-ENDOWMT-AMT: AVERAGE NEW ENDOWMENT AMOUNT   *
+      *                                                     *
+      *                                                     *
+      * PRINT-LINE-BREAK: PRINTS A BLANK LINE               *
+      *                                                     *
+      * PRINT-FOOTER-1: PRINTS COLUMN LABELS FOR TOTALS     *
+      * PRINT-FOOTER-DASHES: PRINTS DASHES UNDER FOOTER-1   *
+      * PRINT-TOTALS: REPORT 1 TOTALS OUTPUT                *
+      * PRINT-AVGS-1: REPORT 1 AVERAGES OUTPUT              *
+      *                                                     *
+      * LE-INPUT-RECORD: LOW ENDOWMENT INPUT RECORD         *
+      * LE-PRINT-LINE: LOW ENDOWMENT OUTPUT RECORD          *
+      *                                                     *
+      * LE-TOTALS: SUM OF ALL LOW ENDOWMENTS                *
+      * LE-COUNT: NUMBER OF LOW ENDOWMENTS                  *
+      * LE-AVG: AVERAGE OF ALL LOW ENDOWMENTS               *
+      *                                                     *
+      * LE-HEADER-1: COLUMN TITLES                          *
+      * LE-HEADER-1-DASHES: DASHES UNDER COLUMN TITLES      *
+      * LE-FOOTER-1: TOTAL COLUMN TITLES                    *
+      * LE-FOOTER-1-DASHES: DASHES FOR TOTAL COLUMN TITLES  *
+      *                                                     *
+      * LE-TOTALS-PRINT-LINE: PRINTS LOW ENDOWMENT TOTAL    *
+      * LE-AVG-PRINT-LINE: PRINTS LOW ENDOWMENT AVERAGE     *
+      *                                                     *
+      *                                                     *
+      *******************************************************
+
+       01  EOF-FLAG-1 PIC X VALUE 'N'.
+       01  EOF-FLAG-2 PIC X VALUE 'N'.
+
+       01 IN-INST-RECORD.
+          05 IN-INST-NME PIC X(30).
+          05 IN-CAP-GAINS-PCT-1 PIC 9(1)V99999.
+          05 IN-CAP-GAINS-PCT-2 PIC 9(1)V99999.
+          05 IN-CAP-GAINS-PCT-3 PIC 9(1)V99999.
+          05 IN-CAP-GAINS-PCT-4 PIC 9(1)V99999.
+       01 OUT-INST-NME PIC X(30).
+
+       01 CAP-GAINS-PCT-1 PIC 9(1)V99999.
+       01 CAP-GAINS-PCT-2 PIC 9(1)V99999.
+       01 CAP-GAINS-PCT-3 PIC 9(1)V99999.
+       01 CAP-GAINS-PCT-4 PIC 9(1)V99999.
+
+       01 TRAN-TYPE-D PIC X(7) VALUE 'DEPOSIT'.
+       01 TRAN-TYPE-W PIC X(10) VALUE 'WITHDRAWAL'.
+       01 TRAN-TYPE-C PIC X(12) VALUE 'REINVESTMENT'.
+
+       01 HEADER-1.
+          05 FILLER PIC X(14) VALUE 'ORCHESTRA NAME'.
+          05 FILLER PIC X(31) VALUE SPACES.
+          05 FILLER PIC X(16) VALUE 'ENDOWMENT AMOUNT'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(16) VALUE 'TRANSACTION TYPE'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(16) VALUE 'ENDOWMENT CHANGE'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(20) VALUE 'NEW ENDOWMENT AMOUNT'.
+
+       01 HEADER-1-DASHES.
+          05 FILLER PIC X(14) VALUE ALL '-'.
+          05 FILLER PIC X(31) VALUE SPACES.
+          05 FILLER PIC X(16) VALUE ALL '-'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(16) VALUE ALL '-'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(16) VALUE ALL '-'.
+          05 FILLER PIC X(3)  VALUE SPACES.
+          05 FILLER PIC X(20) VALUE ALL '-'.
+
+       01  SALES-INPUT-RECORD.
+           05 IN-ORCH-NME                    PIC X(45).
+           05 IN-ENDOWMT-AMT                 PIC S9(9)V99.
+           05 FILLER                         PIC X.
+           05 IN-CAP-GAINS-PCT-FLG           PIC 9.
+           05 FILLER                         PIC X.
+           05 IN-TRAN-TYPE                   PIC X.
+           05 IN-ENDOWMT-CHG-AMT             PIC S9(9)V99.
+
+       01  PRINT-LINE.
+           05 OUT-ORCH-NME                   PIC X(45).
+           05 OUT-ENDOWMT-AMT                PIC $$$,$$$,$$9.99.
+           05 FILLER                         PIC X(6) VALUE SPACES.
+           05 OUT-TRAN-TYPE                  PIC X(12).
+           05 FILLER                         PIC X(6) VALUE SPACES.
+           05 OUT-ENDOWMT-CHG-AMT            PIC $$$,$$$,$$9.99.
+           05 FILLER                         PIC X(10) VALUE SPACES.
+           05 OUT-NEW-ENDOWMT-AMT            PIC $$$,$$$,$$9.99.
+
+       01 ENDOWMT-AMT     PIC S9(9)V99 PACKED-DECIMAL VALUE 0.
+       01 ENDOWMT-CHG-AMT PIC S9(9)V99 PACKED-DECIMAL VALUE 0.
+       01 NEW-ENDOWMT-AMT PIC S9(9)V99 PACKED-DECIMAL VALUE 0.
+
+       01 TOTAL-ENDOWMT-AMT       PIC S9(10)V99 VALUE 0.
+       01 TOTAL-ENDOWMT-CHG-AMT   PIC S9(10)V99 VALUE 0.
+       01 TOTAL-NEW-ENDOWMT-AMT   PIC S9(10)V99 VALUE 0.
+
+       01 TRAN-CTR            PIC S9(10) VALUE 0.
+       01 AVG-ENDOWMT-AMT     PIC S9(10)V99 VALUE 0.
+       01 AVG-ENDOWMT-CHG-AMT PIC S9(10)V99 VALUE 0.
+       01 AVG-NEW-ENDOWMT-AMT PIC S9(10)V99 VALUE 0.
+
+       01 PRINT-LINE-BREAK PIC X(132) VALUE ALL SPACES.
+
+       01 PRINT-FOOTER-1.
+          05 FILLER PIC X(12) VALUE 'TRANSACTIONS'.
+          05 FILLER PIC X(35) VALUE SPACES.
+          05 FILLER PIC X(11) VALUE 'TOT END AMT'.
+          05 FILLER PIC X(25) VALUE SPACES.
+          05 FILLER PIC X(11) VALUE 'TOT CHG AMT'.
+          05 FILLER PIC X(16) VALUE SPACES.
+          05 FILLER PIC X(15) VALUE 'TOT NEW AMOUNT'.
+
+       01 PRINT-FOOTER-DASHES.
+          05 FILLER PIC X(12) VALUE ALL '-'.
+          05 FILLER PIC X(35) VALUE SPACES.
+          05 FILLER PIC X(11) VALUE ALL '-'.
+          05 FILLER PIC X(25) VALUE SPACES.
+          05 FILLER PIC X(11) VALUE ALL '-'.
+          05 FILLER PIC X(16) VALUE SPACES.
+          05 FILLER PIC X(15) VALUE ALL '-'.
+
+       01 PRINT-TOTALS.
+          05 OUT-TRAN-CTR PIC ZZZZ9.
+          05 FILLER PIC X(40) VALUE SPACES.
+          05 OUT-TOTAL-ENDOWMT-AMT PIC $$$$,$$$,$$9.99.
+          05 FILLER PIC X(19) VALUE SPACES.
+          05 OUT-TOTAL-ENDOWMT-CHG-AMT PIC $$$$,$$$,$$9.99.
+          05 FILLER PIC X(16) VALUE SPACES.
+          05 OUT-TOTAL-NEW-ENDOWMT-AMT PIC $$$$,$$$,$$9.99.
+
+       01 PRINT-AVGS-1.
+          05 FILLER PIC X(27) VALUE SPACES.
+          05 FILLER PIC X(19) VALUE 'Averages:         '.
+          05 OUT-AVG-ENDOWMT-AMT     PIC $$$,$$$,$$9.99.
+          05 FILLER PIC X(20) VALUE ALL SPACES.
+          05 OUT-AVG-ENDOWMT-CHG-AMT PIC $$$,$$$,$$9.99.
+          05 FILLER PIC X(17) VALUE ALL SPACES.
+          05 OUT-AVG-NEW-ENDOWMT-AMT PIC $$$,$$$,$$9.99.
+
+       01 LE-INPUT-RECORD.
+          05 LE-ORCH-NME PIC X(45).
+          05 LE-ENDOWMT-AMT PIC S9(9)V99 PACKED-DECIMAL.
+
+       01 LE-PRINT-LINE.
+          05 FILLER PIC X(33) VALUE SPACES.
+          05 OUT-LE-ORCH-NME PIC X(45).
+          05 FILLER PIC X(11) VALUE SPACES.
+          05 OUT-LE-ENDOWMT-AMT PIC $$$,$$$,$$9.99.
+
+       01 LE-TOTALS PIC S9(10)V99 VALUE 0.
+       01 LE-COUNT PIC S9(10) VALUE 0.
+       01 LE-AVG PIC S9(10)V99 VALUE 0.
+
+       01 LE-HEADER-1.
+          05 FILLER PIC X(33) VALUE SPACES.
+          05 FILLER PIC X(14) VALUE 'ORCHESTRA NAME'.
+          05 FILLER PIC X(36) VALUE SPACES.
+          05 FILLER PIC X(20) VALUE 'LOW ENDOWMENT AMOUNT'.
+
+       01 LE-HEADER-1-DASHES.
+          05 FILLER PIC X(33) VALUE SPACES.
+          05 FILLER PIC X(45) VALUE ALL '-'.
+          05 FILLER PIC X(5) VALUE SPACES.
+          05 FILLER PIC X(20) VALUE ALL '-'.
+
+       01 LE-FOOTER-1.
+          05 FILLER PIC X(33) VALUE SPACES.
+          05 FILLER PIC X(12) VALUE 'TRANSACTIONS'.
+          05 FILLER PIC X(32) VALUE SPACES.
+          05 FILLER PIC X(26) VALUE 'TOTAL LOW ENDOWMENT AMOUNT'.
+
+       01 LE-FOOTER-1-DASHES.
+          05 FILLER PIC X(33) VALUE SPACES.
+          05 FILLER PIC X(12) VALUE ALL '-'.
+          05 FILLER PIC X(32) VALUE SPACES.
+          05 FILLER PIC X(26) VALUE ALL '-'.
+
+
+       01 LE-TOTALS-PRINT-LINE.
+          05 FILLER         PIC X(40) VALUE SPACES.
+          05 OUT-LE-COUNT   PIC ZZZ9.
+          05 FILLER         PIC X(45) VALUE SPACES.
+          05 OUT-LE-TOTALS  PIC $$$,$$$,$$9.99.
+
+       01 LE-AVG-PRINT-LINE.
+          05 FILLER      PIC X(75) VALUE SPACES.
+          05 FILLER      PIC X(14) VALUE 'Average:      '.
+          05 OUT-LE-AVG  PIC $$$,$$$,$$9.99.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE CONTROLS THE FLOW OF LOGIC TO PROCESS *
+      * THE INPUT FILE AND PRINT THE RESULTING RECORDS     *
+      * THAT ARE PROCESSED.                                *
+      *                                                    *
+      ******************************************************
+
+       PROCEDURE DIVISION.
+
+       0000-MAIN.
+
+           OPEN INPUT  INPUT-FILE
+                OUTPUT  LOW-FILE
+                OUTPUT OUTPUT-FILE.
+
+           WRITE OUTPUT-RECORD FROM HEADER-1.
+           WRITE OUTPUT-RECORD FROM HEADER-1-DASHES.
+
+           READ INPUT-FILE INTO IN-INST-RECORD
+           END-READ.
+
+           PERFORM 1000-PROCESS-INST-RECORD.
+
+           READ INPUT-FILE INTO SALES-INPUT-RECORD
+             AT END MOVE 'Y' TO EOF-FLAG-1
+           END-READ.
+
+           PERFORM 2000-PROCESS-SALES-RECORD
+             UNTIL EOF-FLAG-1 = 'Y'.
+
+
+           PERFORM 2300-PRINT-TOTALS-AVGS.
+
+           CLOSE LOW-FILE
+                 INPUT-FILE.
+
+           OPEN INPUT LOW-FILE.
+
+           READ LOW-FILE INTO LE-INPUT-RECORD
+               AT END MOVE 'Y' TO EOF-FLAG-2
+           END-READ.
+
+
+           WRITE OUTPUT-RECORD FROM LE-HEADER-1.
+           WRITE OUTPUT-RECORD FROM LE-HEADER-1-DASHES.
+
+           PERFORM 3000-PROCESS-LE-RECORD
+              UNTIL EOF-FLAG-2 = 'Y'.
+
+           PERFORM 3100-PROCESS-LE-TOTALS-AVGS.
+
+           WRITE OUTPUT-RECORD FROM PRINT-LINE-BREAK.
+           WRITE OUTPUT-RECORD FROM LE-FOOTER-1.
+           WRITE OUTPUT-RECORD FROM LE-FOOTER-1-DASHES.
+
+           WRITE OUTPUT-RECORD FROM LE-TOTALS-PRINT-LINE.
+           WRITE OUTPUT-RECORD FROM LE-AVG-PRINT-LINE.
+
+
+           CLOSE LOW-FILE
+                 OUTPUT-FILE.
+           GOBACK.
+
+       0000-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * This routine processes the first record            *
+      *                                                    *
+      ******************************************************
+       1000-PROCESS-INST-RECORD.
+
+            MOVE IN-INST-NME TO OUT-INST-NME.
+            MOVE IN-CAP-GAINS-PCT-1 TO CAP-GAINS-PCT-1.
+            MOVE IN-CAP-GAINS-PCT-2 TO CAP-GAINS-PCT-2.
+            MOVE IN-CAP-GAINS-PCT-3 TO CAP-GAINS-PCT-3.
+            MOVE IN-CAP-GAINS-PCT-4 TO CAP-GAINS-PCT-4.
+
+       1000-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE PROCESSES THE RECORDS AND CALCULATES  *
+      * THE TOTAL ENDOWMENT AMOUNT OF ALL RECORDS.         *
+      *                                                    *
+      ******************************************************
+       2000-PROCESS-SALES-RECORD.
+
+           COMPUTE TRAN-CTR = TRAN-CTR + 1.
+           MOVE IN-ORCH-NME TO OUT-ORCH-NME.
+           MOVE IN-ENDOWMT-AMT TO ENDOWMT-AMT.
+
+           IF IN-TRAN-TYPE = 'D'
+                MOVE TRAN-TYPE-D TO OUT-TRAN-TYPE
+                MOVE IN-ENDOWMT-CHG-AMT TO ENDOWMT-CHG-AMT
+
+                COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                   IN-ENDOWMT-AMT + IN-ENDOWMT-CHG-AMT
+
+           ELSE IF IN-TRAN-TYPE = 'W'
+                MOVE TRAN-TYPE-W TO OUT-TRAN-TYPE
+
+                COMPUTE IN-ENDOWMT-CHG-AMT =
+                   IN-ENDOWMT-CHG-AMT * -1
+
+                MOVE IN-ENDOWMT-CHG-AMT TO ENDOWMT-CHG-AMT
+
+                COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                   IN-ENDOWMT-AMT + IN-ENDOWMT-CHG-AMT
+
+
+           ELSE
+                MOVE TRAN-TYPE-C TO OUT-TRAN-TYPE
+
+                IF IN-CAP-GAINS-PCT-FLG = 1
+                   COMPUTE ENDOWMT-CHG-AMT ROUNDED =
+                      IN-ENDOWMT-AMT * CAP-GAINS-PCT-1
+
+                   COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                      ENDOWMT-CHG-AMT + IN-ENDOWMT-AMT
+
+                ELSE IF IN-CAP-GAINS-PCT-FLG = 2
+                   COMPUTE ENDOWMT-CHG-AMT ROUNDED =
+                      IN-ENDOWMT-AMT * CAP-GAINS-PCT-2
+
+                   COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                      ENDOWMT-CHG-AMT + IN-ENDOWMT-AMT
+
+                ELSE IF IN-CAP-GAINS-PCT-FLG = 3
+                   COMPUTE ENDOWMT-CHG-AMT ROUNDED =
+                     IN-ENDOWMT-AMT * CAP-GAINS-PCT-3
+
+                   COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                      ENDOWMT-CHG-AMT + IN-ENDOWMT-AMT
+
+                ELSE
+                   COMPUTE ENDOWMT-CHG-AMT ROUNDED =
+                     IN-ENDOWMT-AMT * CAP-GAINS-PCT-4
+
+                   COMPUTE NEW-ENDOWMT-AMT ROUNDED =
+                      ENDOWMT-CHG-AMT + IN-ENDOWMT-AMT
+
+                END-IF
+           END-IF.
+
+           MOVE ENDOWMT-AMT TO OUT-ENDOWMT-AMT.
+           MOVE ENDOWMT-CHG-AMT TO OUT-ENDOWMT-CHG-AMT.
+           MOVE NEW-ENDOWMT-AMT TO OUT-NEW-ENDOWMT-AMT.
+
+           PERFORM 2100-PROCESS-TOTALS.
+
+           WRITE OUTPUT-RECORD FROM PRINT-LINE AFTER 2.
+
+           IF NEW-ENDOWMT-AMT < 1000000
+              PERFORM 2400-ADD-TO-LE-REPORT
+           END-IF.
+
+           READ INPUT-FILE INTO SALES-INPUT-RECORD
+              AT END MOVE 'Y' TO EOF-FLAG-1
+           END-READ.
+
+       2000-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE CALCULATES THE TOTALS FOR EACH        *
+      * CATEGORY                                           *
+      *                                                    *
+      ******************************************************
+       2100-PROCESS-TOTALS.
+
+           COMPUTE TOTAL-ENDOWMT-AMT ROUNDED =
+             TOTAL-ENDOWMT-AMT + IN-ENDOWMT-AMT.
+
+           COMPUTE TOTAL-ENDOWMT-CHG-AMT ROUNDED =
+             ENDOWMT-CHG-AMT + TOTAL-ENDOWMT-CHG-AMT.
+
+           COMPUTE TOTAL-NEW-ENDOWMT-AMT ROUNDED =
+             TOTAL-NEW-ENDOWMT-AMT + NEW-ENDOWMT-AMT.
+
+       2100-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE CALCULATES THE AVERAGES FOR EACH      *
+      * CATEGORY                                           *
+      *                                                    *
+      ******************************************************
+       2200-PROCESS-AVGS.
+
+           COMPUTE AVG-ENDOWMT-AMT ROUNDED =
+              TOTAL-ENDOWMT-AMT / TRAN-CTR.
+           MOVE AVG-ENDOWMT-AMT TO OUT-AVG-ENDOWMT-AMT.
+
+           COMPUTE AVG-ENDOWMT-CHG-AMT ROUNDED =
+              TOTAL-ENDOWMT-CHG-AMT / TRAN-CTR.
+           MOVE AVG-ENDOWMT-CHG-AMT TO OUT-AVG-ENDOWMT-CHG-AMT.
+
+           COMPUTE AVG-NEW-ENDOWMT-AMT ROUNDED =
+              TOTAL-NEW-ENDOWMT-AMT / TRAN-CTR.
+           MOVE AVG-NEW-ENDOWMT-AMT TO OUT-AVG-NEW-ENDOWMT-AMT.
+
+       2200-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE PRINTS THE ENDOWMENT TOTALS AND AVGS  *
+      * FOR THE FIRST REPORT.                              *
+      *                                                    *
+      ******************************************************
+       2300-PRINT-TOTALS-AVGS.
+
+           WRITE OUTPUT-RECORD FROM PRINT-LINE-BREAK.
+
+           WRITE OUTPUT-RECORD FROM PRINT-FOOTER-1.
+           WRITE OUTPUT-RECORD FROM PRINT-FOOTER-DASHES.
+
+           MOVE TOTAL-ENDOWMT-AMT TO OUT-TOTAL-ENDOWMT-AMT.
+           MOVE TOTAL-ENDOWMT-CHG-AMT TO OUT-TOTAL-ENDOWMT-CHG-AMT.
+           MOVE TOTAL-NEW-ENDOWMT-AMT TO OUT-TOTAL-NEW-ENDOWMT-AMT.
+           MOVE TRAN-CTR TO OUT-TRAN-CTR.
+
+           WRITE OUTPUT-RECORD FROM PRINT-TOTALS.
+           PERFORM 2200-PROCESS-AVGS.
+           WRITE OUTPUT-RECORD FROM PRINT-AVGS-1.
+           WRITE OUTPUT-RECORD FROM PRINT-LINE-BREAK.
+           WRITE OUTPUT-RECORD FROM PRINT-LINE-BREAK.
+
+
+       2300-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE INSERTS A LOW ENDOWMENT RECORD TO THE *
+      * LOW ENDOWMENT FILE                                 *
+      *                                                    *
+      ******************************************************
+       2400-ADD-TO-LE-REPORT.
+
+           MOVE IN-ORCH-NME TO LE-ORCH-NME.
+           MOVE NEW-ENDOWMT-AMT TO LE-ENDOWMT-AMT.
+           WRITE LE-OUTPUT-RECORD FROM LE-INPUT-RECORD.
+
+       2400-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE PROCESS THE RECORDS AND CALCULATES    *
+      * THE TOTAL DEPOSIT AMOUNT OF LOW ENDOWMNT RECORDS.  *
+      *                                                    *
+      ******************************************************
+       3000-PROCESS-LE-RECORD.
+
+           MOVE LE-ORCH-NME TO OUT-LE-ORCH-NME.
+           MOVE LE-ENDOWMT-AMT TO OUT-LE-ENDOWMT-AMT.
+
+           COMPUTE LE-TOTALS ROUNDED =
+              LE-TOTALS + LE-ENDOWMT-AMT.
+
+           ADD 1 TO LE-COUNT.
+
+           WRITE OUTPUT-RECORD FROM LE-PRINT-LINE AFTER 2.
+
+           READ LOW-FILE INTO LE-INPUT-RECORD
+              AT END MOVE 'Y' TO EOF-FLAG-2
+           END-READ.
+
+       3000-EXIT. EXIT.
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE CALCULATES THE TOTALS AND AVERAGES OF *
+      * THE LOW ENDOWMENTS FOR THE SECOND REPORT.          *
+      *                                                    *
+      ******************************************************
+       3100-PROCESS-LE-TOTALS-AVGS.
+           MOVE LE-COUNT TO OUT-LE-COUNT.
+           MOVE LE-TOTALS TO OUT-LE-TOTALS.
+
+           COMPUTE LE-AVG ROUNDED = LE-TOTALS / LE-COUNT.
+           MOVE LE-AVG TO OUT-LE-AVG.
+
+       3100-EXIT. EXIT.
+
+/*
+//*
+//SYSLIN   DD DSN=&&TEMP,SPACE=(TRK,(3,3)),
+//            DISP=(NEW,PASS)
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP02: LINKAGE EDITOR (HEWL)                         *
+//*                                                        *
+//* PARAMETERS: 'MAP,LET'                                  *
+//* CONDITIONS: (0,LT)                                     *
+//*                                                        *
+//* DDNAME:           FILE DESCRIPTION:                    *
+//*                                                        *
+//* SYSLIB     INPUT: MACRO LIBRARIES                      *
+//* SYSLIN     INPUT: OBJECT CREATED BY JSTEP01            *
+//*                                                        *
+//* SYSLMOD   OUTPUT: PROGRAM OBJECT CREATED               *
+//* SYSPRINT  OUTPUT: MESSAGES FROM LINKAGE EDITOR         *
+//*                                                        *
+//* SYSUT1   UTILITY: WORK AREA FOR LINKAGE EDITOR         *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP02   EXEC PGM=HEWL,PARM='MAP,LET',COND=(0,LT)
+//*
+//SYSLIB    DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN    DD DSN=&&TEMP,DISP=(OLD,DELETE)
+//*
+//SYSLMOD   DD DSN=KC03EA4.CSCI465.LOADLIB(COBPGM5),
+//             DISP=(MOD,KEEP,KEEP)
+//*
+//SYSPRINT  DD SYSOUT=*
+//*
+//SYSUT1    DD SPACE=(CYL,(1,1))
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP03: FETCH AND EXECUTE (COBPGM4)                   *
+//*                                                        *
+//* PARAMETERS: NONE                                       *
+//* CONDITIONS: (0,LT)                                     *
+//*                                                        *
+//* DDNAME:           FILE DESCRIPTION:                    *
+//*                                                        *
+//* STEPLIB    INPUT: LOAD LIBRARY FOR LOAD MODULE         *
+//* INPUT      INPUT: LOCATION OF THE DATA                 *
+//*                                                        *
+//* OUTPUT    OUTPUT: OUTPUT OF THE DATA                   *
+//* SYSUDUMP  OUTPUT: FOR A SYSTEM DUMP IF ABEND           *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP03    EXEC PGM=COBPGM5,COND=(0,LT)
+//*
+//STEPLIB    DD DSN=KC03EA4.CSCI465.LOADLIB,DISP=SHR
+//*
+//INFILE     DD DSN=KC02322.CSCI465.DATAFA19(DATA5),DISP=SHR
+//LOWFILE    DD SPACE=(TRK,(1,1))
+//OUTFILE    DD SYSOUT=*
+//*
+//SYSUDUMP   DD SYSOUT=*
+//*
+//

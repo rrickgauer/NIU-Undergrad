@@ -1,0 +1,280 @@
+//KC03EA4A JOB ,'RICKGAUER',MSGCLASS=H
+//*
+//**********************************************************
+//*                                                        *
+//* CSCI 465 - FALL 2019                                   *
+//*                                                        *
+//* ASSIGNMENT: PROGRAM 4                                  *
+//*                                                        *
+//* PROGRAMERS: RYAN RICKGAUER                             *
+//*                                                        *
+//* DUE DATE: 10/07/2019                                   *
+//* DUE TIME: 11:59 PM                                     *
+//*                                                        *
+//* PURPOSE: COBOL PROGRAM THAT CREATES A SINGLE REPORT    *
+//*          BASED ON INFORMATION CONTAINED IN A FILE      *
+//*          WITH AN UNKNOWN NUMBER OF RECORDS             *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP01  EXEC PGM=IGYCRCTL,PARM='FLAG(I,I),APOST',REGION=0M
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP01: COBOL COMPILER (IGYCRCTL)                     *
+//*                                                        *
+//* PARAMETERS: 'FLAG(I,I),APOST'                          *
+//* CONDITIONS: NONE                                       *
+//*                                                        *
+//* DDNAME:     FILE DESCRIPTION:                          *
+//*                                                        *
+//* SYSIN       INPUT: IN STREAM SOURCE CODE               *
+//* STEPLIB     INPUT: LOAD LIBRARY                        *
+//*                                                        *
+//* SYSLIN     OUTPUT: RESULTING OBJECT MODULE             *
+//* SYSPRINT   OUTPUT: COMPILER MESSAGES                   *
+//*                                                        *
+//* SYSUT1-7  UTILITY: COMPILER SCRATCH PAD                *
+//**********************************************************
+//*
+//SYSMDECK DD SPACE=(CYL,(1,1))
+//SYSUT1   DD SPACE=(CYL,(1,1))
+//SYSUT2   DD SPACE=(CYL,(1,1))
+//SYSUT3   DD SPACE=(CYL,(1,1))
+//SYSUT4   DD SPACE=(CYL,(1,1))
+//SYSUT5   DD SPACE=(CYL,(1,1))
+//SYSUT6   DD SPACE=(CYL,(1,1))
+//SYSUT7   DD SPACE=(CYL,(1,1))
+//SYSUT8   DD SPACE=(CYL,(1,1))
+//SYSUT9   DD SPACE=(CYL,(1,1))
+//SYSUT10  DD SPACE=(CYL,(1,1))
+//SYSUT11  DD SPACE=(CYL,(1,1))
+//SYSUT12  DD SPACE=(CYL,(1,1))
+//SYSUT13  DD SPACE=(CYL,(1,1))
+//SYSUT14  DD SPACE=(CYL,(1,1))
+//SYSUT15  DD SPACE=(CYL,(1,1))
+//*
+//SYSIN    DD *
+      ****************************************************************
+      *                                                              *
+      * PROGRAM NAME: COBPGM4                                        *
+      *                                                              *
+      * FUNCTION: THIS PROGRAM CREATES A SINGLE REPORT BASED ON      *
+      *           INFORMATION CONTAINED IN A FILE WITH AN UNKNOWN    *
+      *           NUMBER OF RECORDS                                  *
+      *                                                              *
+      * ENTRY CONDITIONS: NONE                                       *
+      *                                                              *
+      * EXIT CONDITIONS:  NONE                                       *
+      *                                                              *
+      * INPUT:    INFILE - THE INPUT DATA RECORDS READ IN.           *
+      *                                                              *
+      * OUTPUT:   OUTFILE - THE INPUT DATA RECORDS WRITTEN OUT.      *
+      *                                                              *
+      ****************************************************************
+
+       IDENTIFICATION DIVISION.
+
+       PROGRAM-ID.    COBPGM4.
+       AUTHOR.        RYAN RICKGAUER.
+       DATE-WRITTEN.  10/07/2019.
+       DATE-COMPILED. 10/07/2019.
+
+       ENVIRONMENT DIVISION.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE OUTLINES THE STEPS FOR RETREIVING AND *
+      * PRINTING THE DATA                                  *
+      *                                                    *
+      ******************************************************
+
+       INPUT-OUTPUT SECTION.
+
+       FILE-CONTROL.
+
+           SELECT INPUT-FILE ASSIGN TO INFILE.
+           SELECT OUTPUT-FILE ASSIGN TO OUTFILE.
+
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       FD  INPUT-FILE
+           RECORDING MODE IS F.
+
+       01  INPUT-RECORD                         PIC X(80).
+
+       FD  OUTPUT-FILE
+           RECORDING MODE IS F.
+
+       01  OUTPUT-RECORD                        PIC X(132).
+
+       WORKING-STORAGE SECTION.
+
+      *******************************************************
+      * VARIABLES USED:                                     *
+      *                                                     *
+      * EOF-FLAG-1:        EOF FLAG                         *
+      *                                                     *
+      * TOT-END-AMT:       TOTAL OF EACH ORCHESTRA AMOUNT   *
+      *                                                     *
+      * IN-ORCH-NME:       INPUT ORCHESTRA NAME             *
+      * IN-ORCH-AMT:       INPUT ORCHESTRA AMOUNT           *
+      * IN-COMM-PCT-FLAG:  INPUT COMMISSION FLAG            *
+      *                                                     *
+      * OUT-ORCH-NME:      OUTPUT FOR ORCHESTRA NAME        *
+      * OUT-ORCH-AMT:      OUTPUT FOR ORCHESTRA AMOUNT      *
+      * OUT-COMM-PCT-FLAG: OUTPUT FOR COMMISSION FLAG       *
+      * OUT-TOTAL-END:     OUTPUT FOR TOTAL ORCHESTRA AMOUNT*
+      *                                                     *
+      *******************************************************
+
+       01  EOF-FLAG-1                          PIC X VALUE 'N'.
+
+       01  TOTALS.
+           05 TOTAL-END-AMT                    PIC S9(11)V99 VALUE 0.
+
+       01  PRINT-TOTALS.
+           05 FILLER                           PIC X(57) VALUE SPACES.
+           05 OUT-TOTAL-END                    PIC $$$$,$$$,$$9.99.
+           05 FILLER                           PIC X(61) VALUE SPACES.
+
+       01  SALES-INPUT-RECORD.
+           05 IN-ORCH-NME                      PIC X(45).
+           05 FILLER                           PIC X(5).
+           05 IN-ORCH-AMT                      PIC S9(9)V99.
+           05 FILLER                           PIC X(3).
+           05 IN-COMM-PCT-FLAG                 PIC 9.
+           05 FILLER                           PIC X(15).
+
+       01  PRINT-LINE.
+           05  OUT-ORCH-NME                    PIC X(45).
+           05  FILLER                          PIC X(5) VALUE SPACES.
+           05  OUT-ORCH-AMT                    PIC $,$$$,$$$,$$9.99.
+           05  FILLER                          PIC X(4) VALUE SPACES.
+           05  OUT-COMM-PCT-FLAG               PIC 9.
+           05  FILLER                          PIC X(15) VALUE SPACES.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE CONTROLS THE FLOW OF LOGIC AND PRINTS *
+      * THE RESULTING PROCESSED RECORDS                    *
+      *                                                    *
+      ******************************************************
+
+       PROCEDURE DIVISION.
+
+       0000-MAIN.
+
+           OPEN INPUT  INPUT-FILE
+                OUTPUT OUTPUT-FILE.
+
+           READ INPUT-FILE INTO SALES-INPUT-RECORD
+             AT END MOVE 'Y' TO EOF-FLAG-1
+           END-READ.
+
+           PERFORM 1000-PROCESS-SALES-RECORD
+             UNTIL EOF-FLAG-1 = 'Y'.
+
+           MOVE TOTAL-END-AMT TO OUT-TOTAL-END.
+
+           WRITE OUTPUT-RECORD FROM PRINT-TOTALS AFTER 2.
+
+           CLOSE INPUT-FILE
+                 OUTPUT-FILE.
+
+           GOBACK.
+
+       0000-EXIT. EXIT.
+
+      ******************************************************
+      *                                                    *
+      * THIS ROUTINE PROCESSES EACH RECORD AND ADDS THE    *
+      * RECORD AMOUNT TO THE RUNNING TOTAL                 *
+      *                                                    *
+      ******************************************************
+
+       1000-PROCESS-SALES-RECORD.
+
+           MOVE IN-ORCH-NME TO OUT-ORCH-NME.
+           MOVE IN-ORCH-AMT TO OUT-ORCH-AMT.
+           MOVE IN-COMM-PCT-FLAG TO OUT-COMM-PCT-FLAG.
+
+           WRITE OUTPUT-RECORD FROM PRINT-LINE AFTER 2.
+
+           COMPUTE TOTAL-END-AMT ROUNDED =
+              TOTAL-END-AMT + IN-ORCH-AMT.
+
+           READ INPUT-FILE INTO SALES-INPUT-RECORD
+              AT END MOVE 'Y' TO EOF-FLAG-1
+           END-READ.
+
+       1000-EXIT. EXIT.
+/*
+//*
+//SYSLIN   DD DSN=&&TEMP,SPACE=(TRK,(3,3)),
+//            DISP=(NEW,PASS)
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP02: LINKAGE EDITOR (HEWL)                         *
+//*                                                        *
+//* PARAMETERS: 'MAP,LET'                                  *
+//* CONDITIONS: (0,LT)                                     *
+//*                                                        *
+//* DDNAME:    FILE DESCRIPTION:                           *
+//*                                                        *
+//* SYSLIB     INPUT: MACRO LIBRARIES                      *
+//* SYSLIN     INPUT: OBJECT CREATED BY JSTEP01            *
+//*                                                        *
+//* SYSLMOD   OUTPUT: PROGRAM OBJECT CREATED               *
+//* SYSPRINT  OUTPUT: MESSAGES FROM LINKAGE EDITOR         *
+//*                                                        *
+//* SYSUT1   UTILITY: WORK AREA FOR LINKAGE EDITOR         *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP02   EXEC PGM=HEWL,PARM='MAP,LET',COND=(0,LT)
+//*
+//SYSLIB    DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN    DD DSN=&&TEMP,DISP=(OLD,DELETE)
+//*
+//SYSLMOD   DD DSN=KC03EA4.CSCI465.LOADLIB(COBPGM4),
+//             DISP=(MOD,KEEP,KEEP)
+//*
+//SYSPRINT  DD SYSOUT=*
+//*
+//SYSUT1    DD SPACE=(CYL,(1,1))
+//*
+//**********************************************************
+//*                                                        *
+//* JSTEP03: FETCH AND EXECUTE (COBPGM4)                   *
+//*                                                        *
+//* PARAMETERS: NONE                                       *
+//* CONDITIONS: (0,LT)                                     *
+//*                                                        *
+//* DDNAME:           FILE DESCRIPTION:                    *
+//*                                                        *
+//* STEPLIB    INPUT: LOAD LIBRARY FOR LOAD MODULE         *
+//* INPUT      INPUT: LOCATION OF THE DATA                 *
+//*                                                        *
+//* OUTPUT    OUTPUT: OUTPUT OF THE DATA                   *
+//* SYSUDUMP  OUTPUT: FOR A SYSTEM DUMP IF ABEND           *
+//*                                                        *
+//**********************************************************
+//*
+//JSTEP03    EXEC PGM=COBPGM4,COND=(0,LT)
+//*
+//STEPLIB    DD DSN=KC03EA4.CSCI465.LOADLIB,DISP=SHR
+//*
+//INFILE     DD DSN=KC02322.CSCI465.DATAFA19(DATA4),DISP=SHR
+//*
+//OUTFILE    DD SYSOUT=*
+//*
+//SYSUDUMP   DD SYSOUT=*
+//*
+//

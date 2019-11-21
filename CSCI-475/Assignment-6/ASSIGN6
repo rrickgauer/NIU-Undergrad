@@ -1,0 +1,681 @@
+//KC03EA4A JOB ,'Rickgauer',MSGCLASS=H
+//*
+//************************************************************
+//*                                                          *
+//*  CSCI 465/565 - Fall 2019                                *
+//*                                                          *
+//*  ASSIGNMENT 6                                           *
+//*                                                          *
+//*  PROGRAMMER:  Ryan Rickgauer                             *
+//*  DUE DATE:  11/4/19                                      *
+//*  DUE TIME:  11:59PM                                      *
+//*                                                          *
+//************************************************************
+//*
+//************************************************************
+//* FUNCTION: TO COMPILE PROGRAM WRITTEN                     *
+//* INPUT:    ASSEMBLER CODE                                 *
+//* OUTPUT:   NONE                                           *
+//* ENTRY CONDITIONS: NONE                                   *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES:  TAKES ASSEMBLER CODE AND CONTACTS COMPILER       *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//***********************************************************
+//*  JSTEP01                                                *
+//***********************************************************
+//*
+//JSTEP01  EXEC PGM=ASMA90,PARM=ASA
+//*
+//SYSLIB   DD DSN=SYS1.MACLIB,DISP=SHR
+//*
+//SYSIN    DD *
+         PRINT  NOGEN                MACRO CALL SUPPRESSION
+**********************************************************************
+*                                                                    *
+* PROGRAM:    ASMPGM6                                                *
+* AUTHOR:     RYAN RICKGAUER                                         *
+* DATE:       11/04/2019                                             *
+*                                                                    *
+* FUNCTION:  USES THE 5 ASSEMBLER QSAM MACROS TO CREATE 2 REPORTS    *
+*                                                                    *
+* INPUT:     INPUT - THE INPUT DATA RECORDS READ IN.                 *
+*                                                                    *
+* OUTPUT:    OUTPUT - THE INPUT DATA RECORDS WRITTEN OUT.            *
+* OUTPUT/INPUT: LOWFILE - THE LOW DATA RECORDS TO BE PROCESSED       *
+*                                                                    *
+**********************************************************************
+ASMPGM6  CSECT                       BEGIN ASMPGM6
+*
+* STANDARD ENTRY:
+         STM   14,12,12(13)               SAVE CALLER'S REGS
+         LR    12,15                      SET R12 TO R15
+         USING ASMPGM6,12                 ESTABLISH R12 AS 1ST BASE REG
+         LA    14,REGS                    R14 -> CURRENT SAVE AREA
+         ST    13,4(,14)                  SAVE CALLER'S SAVE AREA ADDR
+         ST    14,8(,14)                  SAVE CURRENT SAVE AREA ADDR
+         LR    13,14                      R13 -> CURRENT SAVE AREA
+*
+         LA    11,4095(,12)
+         LA    11,1(,11)
+         USING ASMPGM6+4096,11
+**********************************************************************
+         OPEN  (INDCB,(INPUT))            OPEN INPUT FILE
+         LTR   15,15                      CHECK FOR SUCCESSFUL OPEN
+         BZ    OPENOK                     BRANCH IF OK TO OPENOK1
+         ABEND 222,DUMP                   ABEND IF OPEN FAILS
+OPENOK   OPEN  (LOWDCB,(OUTPUT))          OPEN LOW FILE
+         LTR   15,15                      CHECK FOR SUCCESSFUL OPEN
+         BZ    OPENOK1                    BRANCH TO OPENOK1
+         ABEND 333,DUMP                   ABEND IF OPEN FAILS
+OPENOK1  OPEN  (OUTDCB,(OUTPUT))          OPEN OUTPUT FILE
+         LTR   15,15                      CHECK FOR SUCCESSFUL OPEN
+         BZ    OPENOK2                    BRANCH TO OPENOK2
+         ABEND 444,DUMP                   ABEND IF OPEN FAILS
+*
+OPENOK2  GET   INDCB,INRECORD             READ THE FIRST RECORD
+         MVC   INSTNME(30),INRECORD       READ IN INSTITUTION NAME
+         MVC   INPCT1(6),INRECORD+30      READ IN PCT 1
+         MVC   INPCT2(6),INRECORD+36      READ IN PCT 2
+         MVC   INPCT3(6),INRECORD+42      READ IN PCT 3
+         MVC   INPCT4(6),INRECORD+48      READ IN PCT 4
+*
+         PACK  PCT1(2),INPCT1(6)          PACK PCT1
+         PACK  PCT2(2),INPCT2(6)          PACK PCT2
+         PACK  PCT3(2),INPCT3(6)          PACK PCT3
+         PACK  PCT4(2),INPCT4(6)          PACK PCT4
+********************************************************************
+* PRINT HEADERS
+* PRINT INSTITUTION NAME
+         MVC   OUTPUT+45(30),INSTNME
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 1
+         MVC   OUTPUT(132),HEADER1
+         PUT   OUTDCB,PLINE
+* PRINT BLANK LINE
+         MVC   OUTPUT(132),BLNKLNE
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 2
+         MVC   OUTPUT(132),HEADER2
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 3
+         MVC   OUTPUT(132),HEADER3
+         PUT   OUTDCB,PLINE
+********************************************************************
+         GET   INDCB,INRECORD             READ THE FIRST RECORD
+LOOP1    CLI   EOFFLAG,C'Y'               CHECK FOR END OF INPUT DATA
+         BE    ENDLOOP1                   BRANCH TO ENDLOOP1 IF EOF
+*
+         AP    COUNTER(3),=P'1'           ADD 1 TO COUNTER
+*
+         MVC   ORCHNME(45),INRECORD       READ IN ORCHESTREA NAME
+         MVC   ENDWAMT(11),INRECORD+45    READ IN ENDOWMENT AMOUNT
+         MVC   CGFLAG(1),INRECORD+57      READ IN CAP GAINS FLAG
+         MVC   TRANTYP(1),INRECORD+59     READ IN TRANSACTION TYPE
+         MVC   ENDCHGA(11),INRECORD+60    READ IN ENDOWMENT CHANGE
+*
+         PACK  OENDAMT(6),ENDWAMT(11)     PACK ENDOWMENT AMOUNT
+         AP    TOTAMT(6),OENDAMT(6)       ADD ENDOWMENT TO TOTAL
+*
+         CLI   TRANTYP,C'W'               IF TRANSACTION TYPE IS W
+         BE    WITHDRAW                      BRANCH TO WITHDRAW
+         CLI   TRANTYP,C'D'               IF TRANSACTION TYPE IS D
+         BE    DEPOSIT                       BRANCH TO DEPOSIT
+         CLI   TRANTYP,C'C'               IF TRANSACTION TYPE IS C
+         BE    REINVEST                      BRANCH TO REINVEST
+*
+WITHDRAW MVC   OTRNTYP(12),TYPEW           SET OUTPUT TO WITHDRAW
+         PACK  CHGAMT(6),ENDCHGA(11)      PACK CHANGE AMT
+         ZAP   NEWAMT(6),OENDAMT(6)       SET NEWAMT = OENDAMT
+         SP    NEWAMT(6),CHGAMT(6)        NEWAMT - CHGAMT
+         B     NEXT2                      BRANCH TO NEXT2
+DEPOSIT  MVC   OTRNTYP(12),TYPED           SET OUTPUT TO DEPOSIT
+         PACK  CHGAMT(6),ENDCHGA(11)      PACK ENDCHGA
+         ZAP   NEWAMT(6),OENDAMT(6)       SET NEWAMT = OENDAMT
+         AP    NEWAMT(6),CHGAMT(6)        SUM NEWAMT AND CHGAMT
+         B     NEXT                       BRANCH TO NEXT
+REINVEST MVC   OTRNTYP(12),TYPEC          SET OUTPUT TO REINVEST
+         ZAP   COMAMT(9),OENDAMT(6)       SET COMAMT = OENDAMT
+         CLI   CGFLAG,C'1'                IF CGFLAG = 1
+         BE    ONE                           BRANCH TO ONE
+         CLI   CGFLAG,C'2'                IF CGFLAG = 2
+         BE    TWO                           BRANCH TO TWO
+         CLI   CGFLAG,C'3'                IF CGFLAG = 3
+         BE    THREE                         BRANCH TO THREE
+         CLI   CGFLAG,C'4'                IF CGFLAG = 4
+         BE    FOUR                          BRANCH TO FOUR
+*
+ONE      ZAP   COMAMT(9),OENDAMT(6)       SET COMAMT = OENDAMT
+         MP    COMAMT,PCT1                COMAMT * PCT1
+         SRP   COMAMT,(64-5),5            SHIFT COMAMT 5
+         ZAP   CHGAMT(6),COMAMT(9)        SET CHGAMT = COMAMT
+         B     NEXT                       BRANCH TO NEXT
+TWO      ZAP   COMAMT(9),OENDAMT(6)       SET COMAMT = OENDAMT
+         MP    COMAMT,PCT2                COMAMT * PCT1
+         SRP   COMAMT,(64-5),5            SHIFT COMAMT 5
+         ZAP   CHGAMT(6),COMAMT(9)        SET CHGAMT COMAMT
+         B     NEXT                       BRANCH TO NEXT
+THREE    ZAP   COMAMT(9),OENDAMT(6)       SET COMAMT = OENDAMT
+         MP    COMAMT,PCT3                COMAMT * PCT3
+         SRP   COMAMT,(64-5),5            SHIFT COMAMT 5
+         ZAP   CHGAMT(6),COMAMT(9)        SET CHGAMT = COMAMT
+         B     NEXT                       BRANCH TO NEXT
+FOUR     ZAP   COMAMT(9),OENDAMT(6)       SET COMAMT = OENDAMT
+         MP    COMAMT,PCT4                COMAMT * PCT4
+         SRP   COMAMT,(64-5),5            SHIFT COMAMT 5
+         ZAP   CHGAMT(6),COMAMT(9)        SET CHGAMT = COMAMT
+         B     NEXT                       BRANCH TO NEXT
+*
+NEXT     ZAP   NEWAMT(6),OENDAMT(6)       SET NEWAMT = OENDAMT
+         AP    NEWAMT(6),CHGAMT(6)        COMPUTE NEW AMOUNT
+         AP    TOTCHG(6),CHGAMT(6)        ADD CHGAMT TO RUNNING TOTAL
+         AP    TOTNEW(6),NEWAMT(6)        ADD NEWAMT TO RUNNING TOTAL
+         B     ISLOW                      BRANCH TO ISLOW
+NEXT2    ZAP   NEWAMT(6),OENDAMT(6)       GET THE NEW AMOUNT
+         SP    NEWAMT(6),CHGAMT(6)        COMPUTE NEW AMOUNT
+         SP    TOTCHG(6),CHGAMT(6)        ADD CHGAMT TO RUNNING TOTAL
+         AP    TOTNEW(6),NEWAMT(6)        ADD NEWAMT TO RUNNING TOTAL
+         B     ISLOW                      BRANCH TO ISLOW
+********************************************************************
+ISLOW    CP    NEWAMT,=P'100000000'       IF NEWAMT < 1 MILLION
+         BC    B'1100',LOWNEW                BRANCH TO LOWNEW
+         B     PRINTR                     ELSE BRANCH TO PRINTR
+* MOVE NEW AMOUNT TO LOWFILE:
+LOWNEW   DS    0H
+         AP    LCOUNTER(3),=P'1'          ADD 1 TO LCOUNTER
+         MVC   OUTPUT2(45),ORCHNME        MOVE ORCHNME TO LOWFILE
+         MVC   ONEWAMT(16),PDFORMAT
+         ED    ONEWAMT(16),NEWAMT
+         MVC   OUTPUT2+45(16),ONEWAMT
+*
+         PUT   LOWDCB,LOWLINE
+*
+         AP    LTOTAMT(6),NEWAMT(6)       ADD TO SUM OF LOWAMT
+         B     PRINTR
+**********************************************************************
+PRINTR   MVC   OUTPUT(132),=132C' '
+         MVC   OUTPUT(45),ORCHNME         PRINT ORCHESTRA NAME
+* PRINT ENDOWMENT AMOUNT:
+         MVC   PENDAMT(16),PDFORMAT
+         EDMK  PENDAMT(16),OENDAMT
+         BCTR  1,0
+         MVI   0(1),C'$'
+         MVC   OUTPUT+46(16),PENDAMT
+* PRINT TRANSACTION TYPE:
+         MVC   OUTPUT+70(12),OTRNTYP
+* PRINT ENDOWMENT CHANGE AMOUNT:
+         MVC   OCHGAMT(16),PDFORMAT
+         EDMK  OCHGAMT(16),CHGAMT
+         BCTR  1,0
+         MVI   0(1),C'$'
+         MVC   OUTPUT+87(16),OCHGAMT
+* PRINT NEW ENDOWMENT AMOUNT
+         MVC   ONEWAMT(16),PDFORMAT
+         EDMK  ONEWAMT(16),NEWAMT
+         BCTR  1,0
+         MVI   0(1),C'$'
+         MVC   OUTPUT+110(16),ONEWAMT
+*
+         PUT   OUTDCB,PLINE                     PRINT THE LINE
+*
+         GET   INDCB,INRECORD             GET THE NEXT RECORD
+         B     LOOP1                      BRANCH TO TOP OF LOOP1
+*
+ENDLOOP1 DS    0H
+         MVC   OUTPUT(132),BLNKLNE
+         PUT   OUTDCB,PLINE
+         PUT   OUTDCB,PLINE
+*********************************************************************
+*********************************************************************
+*                         CALCULATE AVERAGES
+*********************************************************************
+*********************************************************************
+* CALCULATE TOTAL ENDOWMENT AVREAGE:
+         ZAP   FIELD2(3),COUNTER(3)
+         ZAP   FIELD1(8),TOTAMT(6)
+         SRP   FIELD2,2,0
+         ZAP   FIELD3(11),FIELD1(8)
+         SRP   FIELD3(11),3,0
+         DP    FIELD3(11),FIELD2(3)
+         SRP   FIELD3(8),64-1,5
+         ZAP   TOTAVG(6),FIELD3(8)
+* CALCULATE ENDOWMENT CHANGE AVERAGE:
+         ZAP   FIELD2(3),COUNTER(3)
+         ZAP   FIELD3(11),=P'0'
+         ZAP   FIELD1(8),TOTCHG(6)
+         SRP   FIELD2,2,0
+         ZAP   FIELD3(11),FIELD1(8)
+         SRP   FIELD3(11),3,0
+         DP    FIELD3(11),FIELD2(3)
+         SRP   FIELD3(8),64-1,5
+         ZAP   CHGAVG(6),FIELD3(8)
+* CALCULATE NEW ENDOWMENT AVERAGE:
+         ZAP   FIELD2(3),COUNTER(3)
+         ZAP   FIELD3(11),=P'0'
+         ZAP   FIELD1(8),TOTNEW(6)
+         SRP   FIELD2,2,0
+         ZAP   FIELD3(11),FIELD1(8)
+         SRP   FIELD3(11),3,0
+         DP    FIELD3(11),FIELD2(3)
+         SRP   FIELD3(8),64-1,5
+         ZAP   NEWAVG(6),FIELD3(8)
+*********************************************************************
+*********************************************************************
+*                    REPORT 1 BOTTOM HEADERS
+*********************************************************************
+*********************************************************************
+* PRINT INSTITUTION NAME
+         MVC   OUTPUT+45(30),INSTNME
+         PUT   OUTDCB,PLINE
+         MVC   OUTPUT(132),=132C' '
+* PRINT HEADER 4
+         MVC   OUTPUT(132),HEADER4
+         PUT   OUTDCB,PLINE
+* PRINT BLANK LINE:
+         MVC   OUTPUT(132),=132C' '
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 5
+         MVC   OUTPUT(132),HEADER5
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 6
+         MVC   OUTPUT(132),HEADER6
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 7
+         MVC   OUTPUT(132),HEADER7
+         PUT   OUTDCB,PLINE
+         MVC   OUTPUT(132),=132C' '
+*******************************************************************
+* PRINT NUMBER OF TRANSACTIONS
+         MVC   OCTR(7),PDFORMAT
+         ED    OCTR(7),COUNTER
+         MVC   OUTPUT(7),OCTR
+* PRINT OUT TOTAL ENDOWMENT AMOUNT:
+         MVC   OTOTAMT(16),PDFORMAT
+         ED    OTOTAMT(16),TOTAMT
+         MVC   OUTPUT+45(16),OTOTAMT
+* PRINT OUT TOTAL ENDOWMENT CHANGE AMOUNT:
+         MVC   OTOTCHG(16),=X'40602020206B2020206B2020214B202060'
+         ED    OTOTCHG(16),TOTCHG
+         MVC   OUTPUT+86(16),OTOTCHG
+* PRINT OUT TOTAL NEW ENDOWMENT AMOUNT:
+         MVC   OTOTNEW(16),PDFORMAT
+         ED    OTOTNEW(16),TOTNEW
+         MVC   OUTPUT+110(16),OTOTNEW
+         PUT   OUTDCB,PLINE
+*********************************************************************
+* PRINT OUT AVERAGES:
+         MVC   OUTPUT(132),=132C' '
+         MVC   OUTPUT+30(9),=C'AVERAGES:'
+* PRINT TOTAL ENDOWMENT AVERAGE:
+         MVC   OTOTAVG(16),PDFORMAT
+         ED    OTOTAVG(16),TOTAVG
+         MVC   OUTPUT+45(16),OTOTAVG
+* PRINT ENDOWMENT CHANGE AVERAGE:
+         MVC   OCHGAVG(16),=X'40602020206B2020206B2020214B2020'
+         ED    OCHGAVG(16),CHGAVG
+         MVC   OUTPUT+86(16),OCHGAVG
+* PRINT NEW ENDOWMENT AVERAGE:
+         MVC   ONEWAVG(16),PDFORMAT
+         ED    ONEWAVG(16),NEWAVG
+         MVC   OUTPUT+110(16),ONEWAVG
+         PUT   OUTDCB,PLINE
+* PRINT BLANK LINES:
+         MVC   OUTPUT(132),=132C' '
+         PUT   OUTDCB,PLINE
+         PUT   OUTDCB,PLINE
+         PUT   OUTDCB,PLINE
+*********************************************************************
+* PROCESS LOW FILE:
+         CLOSE (LOWDCB)                   CLOSE LOW FILE
+         OPEN  (LOWDCB,(INPUT))           OPEN LOW FILE AS INPUT
+* PRINT INSTITUTION NAME:
+         MVC   OUTPUT+45(30),INSTNME
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 8
+         MVC   OUTPUT(132),HEADER8
+         PUT   OUTDCB,PLINE
+* PRINT LINE BREAK
+         MVC   OUTPUT(132),=132C' '
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 9
+         MVC   OUTPUT(132),HEADER9
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 10
+         MVC   OUTPUT(132),HEADER10
+         PUT   OUTDCB,PLINE
+* PRINT LINE BREAK
+         MVC   OUTPUT(132),=132C' '
+         PUT   OUTDCB,PLINE
+         MVC   OUTPUT(132),=132C' '
+*
+         GET   LOWDCB,LRECORD             GET THE FIRST RECORD
+LOOP2    CLI   EOFFLAG2,C'Y'              CHECK FOR END OF INPUT DATA
+         BE    ENDLOOP2                   BRANCH TO ENDLOOP1 IF EOF
+*
+         MVC   OUTPUT+25(61),LRECORD
+         PUT   OUTDCB,PLINE
+*
+         GET   LOWDCB,LRECORD             GET THE NEXT RECORD
+         B     LOOP2                      BRANCH TO TOP OF LOOP1
+ENDLOOP2 MVC   OUTPUT(132),=132C' '
+*
+         PUT   OUTDCB,PLINE
+* PRINT INSTITUTION NAME:
+         MVC   OUTPUT+45(30),INSTNME
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 11
+         MVC   OUTPUT(132),HEADER11
+         PUT   OUTDCB,PLINE
+* PRINT LINE BREAK
+         MVC   OUTPUT(132),=132C' '
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 12
+         MVC   OUTPUT(132),HEADER12
+         PUT   OUTDCB,PLINE
+* PRINT HEADER 13
+         MVC   OUTPUT(132),HEADER13
+         PUT   OUTDCB,PLINE
+         MVC   OUTPUT(132),=132C' '
+*****************************************************************
+* PRINT NUMBER OF LOW TRANSACTIONS
+         MVC   OLCTR(7),PDFORMAT
+         ED    OLCTR(7),LCOUNTER
+         MVC   OUTPUT+30(7),OLCTR
+* PRINT LOW ENDOWMENT TOTAL:
+         MVC   OLTOTAMT(16),PDFORMAT
+         ED    OLTOTAMT(16),LTOTAMT
+         MVC   OUTPUT+80(16),OLTOTAMT
+         PUT   OUTDCB,PLINE
+* CALCULATE LOW ENDOWMENT AVERAGE:
+         ZAP   FIELD2(3),LCOUNTER(3)
+         ZAP   FIELD3(11),=P'0'
+         ZAP   FIELD1(8),LTOTAMT(6)
+         SRP   FIELD2,2,0
+         ZAP   FIELD3(11),FIELD1(8)
+         SRP   FIELD3(11),3,0
+         DP    FIELD3(11),FIELD2(3)
+         SRP   FIELD3(8),64-1,5
+         ZAP   LOWAVG(6),FIELD3(8)
+*
+         MVC   OUTPUT(132),=132C' '
+         MVC   OUTPUT+60(8),=C'AVERAGE:'
+* PRINT LOW ENDOWMENT AVERAGE:
+         MVC   OLOWAVG(16),PDFORMAT
+         ED    OLOWAVG(16),LOWAVG
+         MVC   OUTPUT+80(16),OLOWAVG
+         PUT   OUTDCB,PLINE
+*
+         CLOSE (INDCB,,LOWDCB,,OUTDCB)    CLOSE FILES
+**********************************************************************
+* EXIT LINKAGE:
+         L     13,4(,13)                  R13 -> CALLER'S SAVE AREA
+         L     14,12(,13)                 RESTORE R14
+         LM    0,12,20(13)                RESTORE R0 THROUGH R12
+         BR    14                         RETURN TO CALLER
+**********************************************************************
+         LTORG                            LTORG TO ORGANIZE LITERALS
+         ORG   ASMPGM6+((*-ASMPGM6+31)/32)*32
+         DC    C'HERE IS THE STORAGE FOR: ASMPGM6'
+*
+INSTNME  DC    30C' '                     IN-INSTITUTION NAME
+INPCT1   DC    6C' '                      IN-PCT1
+INPCT2   DC    6C' '                      IN-PCT2
+INPCT3   DC    6C' '                      IN-PCT3
+INPCT4   DC    6C' '                      IN-PCT4
+*
+PCT1     DC    PL2'0'                     PACKED DECIMAL PCT1
+PCT2     DC    PL2'0'                     PACKED DECIMAL PCT2
+PCT3     DC    PL2'0'                     PACKED DECIMAL PCT3
+PCT4     DC    PL2'0'                     PACKED DECIMAL PCT4
+*
+ORCHNME  DC    45C' '                     IN-ORCHESTRA NAME
+ENDWAMT  DC    11C' '                     IN-ENDOWMENT AMOUNT
+CGFLAG   DC    1C' '                      IN-CAPITAL GAINS FLAG
+TRANTYP  DC    1C' '                      IN-TRANSACTION TYPE
+ENDCHGA  DC    11C' '                     IN-ENDOWMENT CHANGE AMT
+*
+OTRNTYP  DC    12C' '                     TRANSACTION TYPE OUTPUT
+TYPED    DC    CL12'DEPOSIT     '         DEPOSIT OUTPUT
+TYPEW    DC    CL12'WITHDRAW    '         WITHDRAW OUTPUT
+TYPEC    DC    CL12'REINVESTMENT'         REINVESTMENT OUTPUT
+*
+NEWAMT   DC    PL6'0'                     PACKED DECIMAL NEW AMOUNT
+CHGAMT   DC    PL6'0'                     PACKED DECIMAL CHG AMOUNT
+ONEWAMT  DC    16C' '                     OUTPUT NEW AMOUNT
+OCHGAMT  DC    16C' '                     OUTPUT CHANGE AMOUNT
+BLNKCHG  DC    11C'0'                     LINE OF ZEROS
+COMAMT   DC    PL9'0'                     PACKED DECIMAL NEW AMOUNT
+*
+PENDAMT  DC    16C' '                     ENDOWMENT AMOUNT OUTPUT
+*
+OENDAMT  DC    PL6'0'                     PACKED ENDOWMENT AMOUNT
+TOTAMT   DC    PL6'0'                     SUM OF ENDOWMENT AMOUNTS
+OTOTAMT  DS    CL16                       TOTAL ENDOWMENT AMOUNT
+TOTCHG   DC    PL6'0'                     SUM OF ENDOWMENT CHANGES
+OTOTCHG  DC    16C' '                     OUTPUT OF ENDOWMENT CHANGES
+TOTNEW   DC    PL6'0'                     SUM OF NEW ENDOWMENTS
+OTOTNEW  DC    16C' '                     OUTPUT OF NEW ENDOWMENTS
+*
+LTOTAMT  DC    PL6'0'                     TOTAL LOW AMT SUM
+OLTOTAMT DC    16C' '                     TOTAL LOW AMT SUM OUTPUT
+LAMT     DC    PL6'0'                     LOW AMOUNT
+OLAMT    DC    16C' '                     LOW AMOUNT OUTPUT
+*
+COUNTER  DC    PL3'0'                     RECORD COUNTER
+LCOUNTER DC    PL3'0'                     LOW AMT RECORD COUNTER
+*
+OCTR     DC    CL4' '                     OUTPUT COUNTER
+OLCTR    DC    CL4' '                     OUTPUT LOW RECORDCOUNTER
+*
+TOTAVG   DC    PL6'0'                     AVERAGE ENDOWMENT AMOUNT
+CHGAVG   DC    PL6'0'                     AVERAGE CHANGE AMOUNT
+NEWAVG   DC    PL6'0'                     AVERAGE NEW AMOUNT
+LOWAVG   DC    PL6'0'                     AVERAGE LOW ENDOWMENT AMOUNT
+*
+OTOTAVG  DC    16C' '                     OUTPUT TOTAL AVERAGE
+OCHGAVG  DC    16C' '                     OUTPUT CHANGE AVERAGE
+ONEWAVG  DC    16C' '                     OUTPUT NEW AVERAGE
+OLOWAVG  DC    16C' '                     OUTPUT LOW AVERAGE
+*
+FIELD1   DC    PL8'0'                     FIELD TO CALCULATE AVERAGES
+FIELD2   DC    PL3'61'                    FIELD TO CALCULATE AVERAGES
+FIELD3   DC    PL11'0'                    FIELD TO CALCULATE AVERAGES
+*
+* PACKED DECIMAL FORMAT:
+PDFORMAT DC    X'402020206B2020206B2020214B202060'
+*
+PLINE    DC    CL1' '                     PRINT LINE
+OUTPUT   DC    132C' '                    OUTPUT LINE
+*
+LOWLINE  DC    CL1' '                     LOW ENDOWMENT PRINT LINE
+OUTPUT2  DC    132C' '                    LOW ENDOWMENT OUTPUT LINE
+*
+BLNKLNE  DC    132C' '                    BLANK LINE
+REGS     DC    18F'0'                     MAINREGS FOR STANDARD LINKAGE
+*
+INRECORD DC    80C'@'                     INPUT BUFFER FILL WITH '@'
+LRECORD  DC    132C' '                    LOW RECORD BUFFER
+*
+HEADER1  DC    CL1' '
+         DC    44C' '
+         DC    CL30'MONTHLY ENDOWMENT FUND CHANGES'
+         DC    57C' '
+*
+HEADER2  DC    CL14'ORCHESTRA NAME'
+         DC    30C' '
+         DC    CL16'ENDOWMENT AMOUNT'
+         DC    6C' '
+         DC    CL16'TRANSACTION TYPE'
+         DC    4C' '
+         DC    CL16'ENDOWMENT CHANGE'
+         DC    4C' '
+         DC    CL20'NEW ENDOWMENT AMOUNT'
+         DC    32C' '
+*
+HEADER3  DC    41C'-'
+         DC    3C' '
+         DC    16C'-'
+         DC    6C' '
+         DC    16C'-'
+         DC    4C' '
+         DC    16C'-'
+         DC    4C' '
+         DC    20C'-'
+         DC    6C' '
+*
+HEADER4  DC    CL1' '
+         DC    40C' '
+         DC    CL37'MONTHLY ENDOWMENT FUND CHANGES TOTALS'
+         DC    54C' '
+*
+HEADER5  DC    45C' '
+         DC    CL5'TOTAL'
+         DC    37C' '
+         DC    CL5'TOTAL'
+         DC    15C' '
+         DC    CL5'TOTAL'
+         DC    20C' '
+*
+HEADER6  DC    CL12'TRANSACTIONS'
+         DC    33C' '
+         DC    CL16'ENDOWMENT AMOUNT'
+         DC    26C' '
+         DC    CL16'ENDOWMENT CHANGE'
+         DC    4C' '
+         DC    CL20'NEW ENDOWMENT AMOUNT'
+         DC    32C' '
+*
+HEADER7  DC    12C'-'
+         DC    33C' '
+         DC    16C'-'
+         DC    26C' '
+         DC    16C'-'
+         DC    4C' '
+         DC    20C'-'
+         DC    35C' '
+*
+HEADER8  DC    40C' '
+         DC    CL38'ORCHESTRA LOW BALANCE ENDOWMENT REPORT'
+         DC    54C' '
+HEADER9  DC    26C' '
+         DC    CL14'ORCHESTRA NAME'
+         DC    31C' '
+         DC    CL20'LOW ENDOWMENT AMOUNT'
+         DC    41C' '
+HEADER10 DC    26C' '
+         DC    42C'-'
+         DC    3C' '
+         DC    20C'-'
+         DC    41C' '
+HEADER11 DC    37C' '
+         DC    CL45'ORCHESTRA LOW BALANCE ENDOWMENT REPORT TOTALS'
+         DC    40C' '
+HEADER12 DC    26C' '
+         DC    CL12'TRANSACTIONS'
+         DC    34C' '
+         DC    CL31'TOTAL LOW ENDOWMENT AMOUNT'
+         DC    29C' '
+HEADER13 DC    26C' '
+         DC    12C'-'
+         DC    34C' '
+         DC    26C'-'
+         DC    29C' '
+***********************************************************************
+* INPUT DCB:
+INDCB    DCB   DDNAME=ASMIN,                                           X
+               DEVD=DA,                                                X
+               DSORG=PS,                                               X
+               MACRF=GM,                                               X
+               RECFM=FB,                                               X
+               LRECL=80,                                               X
+               EODAD=EOFRTN
+EOFFLAG  DC    C'N'                       EOFFLAG FOR INPUT FILE
+EOFRTN   MVI   EOFFLAG,C'Y'               SET EOF FLAG TO Y
+         BR    14                         BRANCH TO STMT FOLLOWING GET
+***********************************************************************
+***********************************************************************
+* LOWEND DCB:
+LOWDCB    DCB  DDNAME=LOWOUT,                                          X
+               DEVD=DA,                                                X
+               DSORG=PS,                                               X
+               MACRF=(GM,PM),                                          X
+               RECFM=FB,                                               X
+               LRECL=133,                                              X
+               EODAD=EOFRTN2
+EOFFLAG2 DC    C'N'                    EOFFLAG FOR LOW FILE
+EOFRTN2  MVI   EOFFLAG2,C'Y'           SET EOF FLAG TO Y
+         BR    14                      BRANCH TO STMT FOLLOWING GET
+***********************************************************************
+*  OUTPUT DCB:
+OUTDCB   DCB   DDNAME=ASMOUT,                                          X
+               DEVD=DA,                                                X
+               DSORG=PS,                                               X
+               MACRF=PM,                                               X
+               RECFM=FBA,                                              X
+               LRECL=133,                                              X
+               BLKSIZE=133
+*
+         END   ASMPGM6
+//*
+//SYSLIN   DD DSN=&&OBJMOD,SPACE=(CYL,(1,1)),
+//            DISP=(NEW,PASS)
+//*
+//SYSUT1   DD SPACE=(CYL,(10,5))
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//************************************************************
+//* FUNCTION: LINKAGE EDITOR                                 *
+//* INPUT:    OBJMOD                                         *
+//* OUTPUT:   NONE                                           *
+//* ENTRY CONDITIONS: CHECKS THAT RETURN CODE IS 0           *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES: PASSES TEMPORARY OBJECT                           *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//***************************************************************
+//*    JSTEP02 - LINKAGE EDITOR                                 *
+//***************************************************************
+//*
+//JSTEP02   EXEC PGM=HEWL,PARM='MAP,LET',COND=(0,LT)
+//*
+//SYSLIB    DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN    DD DSN=&&OBJMOD,DISP=(OLD,DELETE)
+//*
+//SYSLMOD   DD DSN=KC03EA4.CSCI465.LOADLIB(ASMPGM6),
+//             DISP=(MOD,KEEP,KEEP)
+//*
+//*
+//SYSPRINT  DD SYSOUT=*
+//*
+//SYSUT1    DD SPACE=(TRK,(10,10))
+//*
+//************************************************************
+//* FUNCTION: PROGRAM FETCH                                  *
+//* INPUT:    ASMIN                                          *
+//* OUTPUT:   ASMOUT                                         *
+//* ENTRY CONDITIONS: CHECKS RETURN CODE                     *
+//* EXIT CONDITION  : NONE                                   *
+//* NOTES: DISPLAYS RESULTS OF PROGRAM                       *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//****************************************************************
+//*   JSTEP03 = PROGRAM FETCH STEP                               *
+//****************************************************************
+//*
+//JSTEP03    EXEC PGM=ASMPGM6,COND=(0,LT)
+//*
+//STEPLIB    DD DSN=KC03EA4.CSCI465.LOADLIB,DISP=SHR
+//*
+//ASMIN      DD DSN=KC02322.CSCI465.DATAFA19(DATA5),DISP=SHR
+//*
+//LOWOUT     DD SPACE=(TRK,(1,1))
+//*
+//ASMOUT     DD SYSOUT=*
+//*
+//SYSUDUMP   DD SYSOUT=*
+//

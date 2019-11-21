@@ -1,0 +1,167 @@
+//KC03EA4A JOB ,'Rickgauer',MSGCLASS=H
+//*
+//************************************************************
+//*                                                          *
+//*  CSCI 465/565 - Fall 2019                                *
+//*                                                          *
+//*  ASSIGNMENT 3B                                           *
+//*                                                          *
+//*  PROGRAMMER:  Ryan Rickgauer                             *
+//*                                                          *
+//*  DUE DATE:  9/23/19                                      *
+//*  DUE TIME:  11:59PM                                      *
+//*                                                          *
+//************************************************************
+//*
+//************************************************************
+//*
+//* FUNCTION: compiles the written cobol program             *
+//* INPUT:    cobol source code                              *
+//* OUTPUT:   none                                           *
+//* ENTRY CONDITIONS: none                                   *
+//* EXIT CONDITION  : none                                   *
+//* NOTES:  TAKES COBOL CODE AND CONTACTS COMPILER           *
+//*                                                          *
+//************************************************************
+//*
+//***********************************************************
+//*  JSTEP01                                                *
+//***********************************************************
+//*
+//JSTEP01  EXEC PGM=IGYCRCTL,PARM='FLAG(I,I),APOST'
+//STEPLIB  DD  DSN=IGY420.SIGYCOMP,DISP=SHR
+//SYSIN    DD *
+
+       IDENTIFICATION DIVISION.
+
+       PROGRAM-ID.    COBPGM3.
+       AUTHOR.        GEOFFREY D DECKER.
+       DATE-WRITTEN.  02/06/2019.
+       DATE-COMPILED.
+
+       ENVIRONMENT DIVISION.
+
+       INPUT-OUTPUT SECTION.
+
+       FILE-CONTROL.
+
+           SELECT INPUT-FILE ASSIGN TO COBIN.
+           SELECT PRINT-FILE ASSIGN TO COBOUT.
+
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       FD  INPUT-FILE
+           RECORDING MODE IS F.
+
+       01  INPUT-RECORD                        PIC X(80).
+
+       FD  PRINT-FILE
+           RECORDING MODE IS F.
+
+       01  PRINT-RECORD                        PIC X(132).
+
+       WORKING-STORAGE SECTION.
+
+       01  EOF-FLAG                            PIC X VALUE 'N'.
+
+       01  PRINT-LINE.
+           05  OUTPUT-RECORD                   PIC X(80).
+           05  FILLER                          PIC X(52)  VALUE SPACES.
+
+       PROCEDURE DIVISION.
+
+       0000-MAIN.
+
+           OPEN INPUT  INPUT-FILE
+                OUTPUT PRINT-FILE.
+
+           READ INPUT-FILE
+             AT END MOVE 'Y' TO EOF-FLAG
+           END-READ.
+
+           PERFORM 0100-WRITE-RECS
+             UNTIL EOF-FLAG = 'Y'.
+
+           CLOSE INPUT-FILE
+                 PRINT-FILE.
+
+           GOBACK.
+
+       0000-EXIT. EXIT.
+
+       0100-WRITE-RECS.
+
+           MOVE INPUT-RECORD TO OUTPUT-RECORD.
+
+           WRITE PRINT-RECORD FROM PRINT-LINE AFTER 1.
+
+           READ INPUT-FILE
+             AT END MOVE 'Y' TO EOF-FLAG
+           END-READ.
+
+       0100-EXIT. EXIT.
+/*
+//*
+//SYSLIN   DD DSN=&&OBJMOD,SPACE=(CYL,(1,1)),
+//            DISP=(NEW,PASS)
+//*
+//SYSUT1   DD SPACE=(TRK,(3,3))
+//SYSUT2   DD SPACE=(TRK,(3,3))
+//SYSUT3   DD SPACE=(TRK,(3,3))
+//SYSUT4   DD SPACE=(TRK,(3,3))
+//SYSUT5   DD SPACE=(TRK,(3,3))
+//SYSUT6   DD SPACE=(TRK,(3,3))
+//SYSUT7   DD SPACE=(TRK,(3,3))
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//***************************************************************
+//*                                                             *
+//* FUNCTION: LINKAGE EDITOR                                    *
+//* INPUT:    none                                              *
+//* OUTPUT:   none                                              *
+//* ENTRY CONDITIONS: checks if rc is 0                         *
+//* EXIT CONDITION  : n/a                                       *
+//* NOTES:                                                      *
+//*                                                             *
+//*                                                             *
+//***************************************************************
+//*
+//***************************************************************
+//*    JSTEP02 - LINKAGE EDITOR                                 *
+//***************************************************************
+//*
+//JSTEP02   EXEC PGM=HEWL,PARM='MAP,LET',COND=(0,LT)
+//SYSLIB    DD DSN=CEE.SCEELKED,DISP=SHR
+//SYSLIN    DD DSN=&&OBJMOD,DISP=(OLD,DELETE)
+//SYSLMOD   DD DSN=KC03EA4.CSCI465.LOADLIB(COBPGM3),
+//             DISP=(MOD,KEEP,KEEP)
+//*
+//SYSPRINT  DD SYSOUT=*
+//SYSUT1    DD SPACE=(TRK,(3,3))
+//*
+//************************************************************
+//*                                                          *
+//* FUNCTION: PROGRAM FETCH                                  *
+//* INPUT:    COBIN                                          *
+//* OUTPUT:   COBOUT                                         *
+//* ENTRY CONDITIONS: checks if rc is 0                      *
+//* EXIT CONDITION  : n/a                                    *
+//* NOTES:  displays output                                  *
+//*                                                          *
+//*                                                          *
+//************************************************************
+//*
+//****************************************************************
+//*   JSTEP03 = PROGRAM FETCH STEP                               *
+//****************************************************************
+//*
+//JSTEP03    EXEC PGM=COBPGM3,COND=(0,LT)
+//STEPLIB    DD DSN=KC03EA4.CSCI465.LOADLIB,DISP=SHR
+//COBIN      DD DSN=KC02322.CSCI465.DATAFA19(DATA3),DISP=SHR
+//COBOUT     DD SYSOUT=*
+//PRINTOUT   DD SYSOUT=*
+//SYSUDUMP   DD SYSOUT=*
+//

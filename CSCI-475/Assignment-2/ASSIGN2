@@ -1,0 +1,61 @@
+//KC03EA4A JOB ,'Rickgauer',MSGCLASS=H
+//************************************************************
+//*                                                          *
+//*  CSCI 465/565 - Fall 2019                                *
+//*                                                          *
+//*  ASSIGNMENT 2                                            *
+//*                                                          *
+//*  PROGRAMMER:  Ryan Rickgauer                             *
+//*                                                          *
+//*  DUE DATE:  9/11/2019                                    *
+//*  DUE TIME:  11:59PM                                      *
+//*                                                          *
+//*  THE PURPOSE OF THIS PROGRAM IS TO FETCH AND EXECUTE A   *
+//*  PROGRAM USING JCL                                       *
+//************************************************************
+//*
+//*
+//*
+//JSTEP01 EXEC PGM=READDATA
+//STEPLIB DD DSN=KC02322.CSCI465.LOADLIB,DISP=SHR
+//************************************************************
+//*                                                          *
+//*  JSTEP01 FETCHES AND EXECUTES A PROGRAM OBJECT           *
+//*                                                          *
+//*  DDNAME              DESCRIPTION                         *
+//*  ------------------------------------------------------  *
+//*  STEPLIB    INPUT:   LOCATION OF COMPILER                *
+//*  RECSIN1    INPUT:   SOURCE CODE TO BE COMPILED          *
+//*                                                          *
+//*  RECSOUT1  OUTPUT:   RESULTING OBJECT MODULE             *
+//*  SYSUDUMP  OUTPUT:   OUTPUT INCASE OF ADBEND             *
+//*                                                          *
+//************************************************************
+//*
+//RECSIN1 DD DSN=KC02322.CSCI465.DATAFA19(DATA5),DISP=SHR
+//RECSOUT1 DD DSN=&&TEMP,SPACE=(TRK,(10,10)),DISP=(NEW,PASS,KEEP),
+//            DCB=(LRECL=80,BLKSIZE=880,RECFM=FB)
+//SYSUDUMP DD SYSOUT=*
+//*
+//*
+//*
+//JSTEP02 EXEC PGM=RPTDATA,COND=(0,LT)
+//STEPLIB DD DSN=KC02322.CSCI465.LOADLIB,DISP=SHR
+//************************************************************
+//*                                                          *
+//*  JSTEP02 READS THE RECORDS FROM THE TEMPORARY DATA SET   *
+//*  PASSED FROM JSTEP01                                     *
+//*                                                          *
+//*  DDNAME              DESCRIPTION                         *
+//*  ------------------------------------------------------  *
+//*  STEPLIB    INPUT:   LOCATION OF COMPILER                *
+//*  RECSIN2    INPUT:   OBJECT MODULE FROM STEP1            *
+//*                                                          *
+//*  RECSOUT2  OUTPUT:   OUTPUT FROM EXECUTION               *
+//*  SYSUDUMP  OUTPUT:   OUTPUT INCASE OF ADBEND             *
+//*                                                          *
+//************************************************************
+//RECSIN2 DD DSN=&&TEMP,DISP=(OLD,PASS,KEEP)
+//RECSOUT2 DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//
