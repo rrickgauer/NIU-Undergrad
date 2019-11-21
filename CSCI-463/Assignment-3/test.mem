@@ -1,0 +1,43 @@
+00      # NOP
+a0 10   # B 0x10
+
+# some junk data to jump over
+ff ff ff ff ff ff ff ff ff ff ff ff ff
+
+10 11   # LDI R0,0x11
+10 0    # LDI R0,0
+10 60   # LDI R0,0x60
+30      # ADD R0,R0
+20 f0   # ST R0,0xf0
+40      # SUB R0,R0
+
+14 55   # LDI R1,0x55   R1=0x55
+18 50   # LDI R2,0x50   R2=0x50
+56      # XOR R1,R2     R1=0x05, R2=0x50
+
+76      # OR R1,R2      R1=0x55, R2=0x50
+66      # AND R1,R2     R1=0x50, R2=0x50
+
+8d      # MOV R3,R1     R1=0x50, R2=0x50, R3=0x50
+
+90 f0   # LD R0,(0xf0)  R0=0xc0
+
+b0 02   # BR 0x02
+ff ff   # (this is to be branched over to get to next insn)
+00      # NOP
+
+
+# Count from 4 to 0 using R1 as the counter
+10 00   # LDI R0,0x00
+14 04   # LDI R1,0x04
+18 01   # LDI R2,0x01
+1c 00   # LDI R3,0x00   R0=0x00, R1=0x04, R2=0x01, R3=0x00
+
+46      # SUB R1,R2
+d0 fd   # BNZ 0xfd      PC=PC-3
+
+c0 01   # BZ +1 (skip over the following HALT
+ff      # HALT
+
+ee      # HALT
+ff      # HALT
