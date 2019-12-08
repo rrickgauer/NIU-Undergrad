@@ -1,4 +1,5 @@
 # NIU-Undergrad
+This is some of the projects I worked on while completing my Bachelor of Science in Computer Science at Northern Illinois University.
 
 ## Course descriptions
 ### CSCI-240: *Computer Programming in C++*
