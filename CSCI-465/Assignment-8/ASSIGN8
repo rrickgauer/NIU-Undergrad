@@ -1,0 +1,151 @@
+//KC03EA4A JOB ,MSGCLASS=H,NOTIFY=&SYSUID
+//*
+//JOBLIB   DD DSN=DSNC10.DBCG.SDSNEXIT,DISP=SHR
+//         DD DSN=DSNC10.SDSNLOAD,DISP=SHR
+//         DD DSN=&SYSUID..DB2.LOAD,DISP=SHR
+//*
+//*****************************************************************
+//*  SQL PREPROC AND COBOL COMPILATION:
+//*****************************************************************
+//*  NB SQL PREPROC NOW IS NOW DONE BY THE COBOL COMPILER:
+//*****************************************************************
+//*
+//JSTEP01  EXEC PGM=IGYCRCTL,REGION=0M,
+//         PARM=(SQL,NOTERM,NOSEQUENCE,XREF,DYN,APOST)
+//*
+//DBRMLIB  DD DSN=&SYSUID..DB2.DBRMLIB(SALESRPT),DISP=SHR
+//*
+//SYSIN    DD DSN=&SYSUID..DB2.SRCLIB(SALESRPT),DISP=SHR
+//*
+//SYSLIB   DD DSN=KC02322.DB2.DCLLIB,DISP=SHR
+//         DD DSN=KC02322.CSCI465.COPYLIB,DISP=SHR
+//*
+//SYSLIN   DD DSN=&&OBJMOD1,SPACE=(800,(500,500)),DISP=(MOD,PASS)
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSUT1   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT2   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT3   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT4   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT5   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT6   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT7   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT8   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT9   DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT10  DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT11  DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT12  DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT13  DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT14  DD SPACE=(800,(500,500),,,ROUND)
+//SYSUT15  DD SPACE=(800,(500,500),,,ROUND)
+//SYSMDECK DD SPACE=(800,(500,500),,,ROUND)
+//*
+//*****************************************************************
+//*  BINDER FOR SALESRPT
+//*****************************************************************
+//*
+//JSTEP02  EXEC PGM=HEWL,PARM=XREF,COND=(4,LT)
+//*
+//SYSLIB   DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN   DD DSN=&&OBJMOD1,DISP=(OLD,DELETE)
+//         DD *
+   ENTRY SALESRPT
+   MODE  AMODE(24)
+/*
+//*
+//SYSLMOD  DD DSN=&SYSUID..DB2.LOAD(SALESRPT),DISP=SHR
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSUT1   DD SPACE=(1024,(50,50))
+//*
+//*****************************************************************
+//*  ASSEMBLER FOR CALCVALS
+//*****************************************************************
+//*
+//JSTEP03  EXEC PGM=ASMA90,PARM=ASA,COND=(4,LT)
+//*
+//SYSLIB   DD DSN=SYS1.MACLIB,DISP=SHR
+//*
+//SYSIN    DD DSN=&SYSUID..DB2.SRCLIB(CALCVALS),DISP=SHR
+//*
+//SYSLIN   DD DSN=&&OBJMOD2,SPACE=(800,(500,500)),DISP=(MOD,PASS)
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSUT1   DD SPACE=(800,(500,500),,,ROUND)
+//*
+//*****************************************************************
+//*  BINDER FOR CALCVALS
+//*****************************************************************
+//*
+//JSTEP04  EXEC PGM=HEWL,COND=(4,LT)
+//*
+//SYSLIB   DD DSN=CEE.SCEELKED,DISP=SHR
+//*
+//SYSLIN   DD DSN=&&OBJMOD2,DISP=(OLD,DELETE)
+//         DD *
+   ENTRY CALCVALS
+   MODE  AMODE(24)
+/*
+//*
+//SYSLMOD  DD DSN=&SYSUID..DB2.LOAD(CALCVALS),DISP=SHR
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSUDUMP DD SYSOUT=*
+//*
+//SYSUT1   DD SPACE=(1024,(50,50))
+//*
+//*****************************************************************
+//*  DB2 BINDER FOR SALESRPT
+//*****************************************************************
+//*
+//JSTEP05  EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
+//*
+//DBRMLIB  DD DSN=&SYSUID..DB2.DBRMLIB,DISP=SHR
+//*
+//SYSTSPRT DD SYSOUT=*
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSOUT   DD SYSOUT=*
+//*
+//SYSTSIN  DD *
+  DSN SYSTEM(DBCG)
+    BIND PLAN(NIU) -
+    MEMBER(SALESRPT) -
+    ACT(REP) -
+    ISO(CS) -
+    ENCODING(EBCDIC)
+  END
+/*
+//*
+//*****************************************************************
+//*  EXECUTE SALESRPT
+//*****************************************************************
+//*
+//JSTEP06  EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
+//*
+//SYSTSPRT DD SYSOUT=*
+//*
+//SALESFLE DD DSN=KC02322.CSCI465.DATA7(SALES),DISP=SHR
+//*
+//SYSTSIN DD *
+  DSN SYSTEM(DBCG)
+    RUN PROGRAM(SALESRPT) -
+    PLAN(NIU) -
+    LIB(DB2)
+  END
+/*
+//*
+//RPTFLE   DD SYSOUT=*
+//*
+//SYSPRINT DD SYSOUT=*
+//*
+//SYSOUT   DD SYSOUT=*
+//*
+//SYSUDUMP DD SYSOUT=*
+//

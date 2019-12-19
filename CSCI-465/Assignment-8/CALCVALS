@@ -1,0 +1,47 @@
+         PRINT  NOGEN                MACRO CALL SUPPRESSION
+CALCVALS CSECT
+********************************************************************
+*  STANDARD ENTRY LINKAGE
+         STM   14,12,12(13)          SAVE CALLER'S REGS
+         LR    12,15                 SET R12 TO R15
+         USING CALCVALS,12           ESTABLISH R12 AS 1ST BASE REG
+         LA    14,REGS               R14 -> CURRENT SAVE AREA
+         ST    13,4(,14)             SAVE CALLER'S SAVE AREA ADDR
+         ST    14,8(,14)             SAVE CURRENT SAVE AREA ADDR
+         LR    13,14                 R13 -> CURRENT SAVE AREA
+********************************************************************
+         LM    2,6,0(1)                 LOAD VARIABLES IN R2-R6
+         ZAP   DEPAMT(11),0(6,2)        LOAD R2 INTO DEPAMT
+         ZAP   SHRPRC(3),0(3,3)         LOAD R3 INTO SHRPRC
+         ZAP   COMMPCT(4),0(4,5)        LOAD R5 INTO COMPCT
+*****************************************************************
+* CALCULATE SHARES SOLD:
+         ZAP   SHRSOLD(11),DEPAMT(11)   SET SHARES SOLD
+         SRP   SHRSOLD(11),3,0          SHIFT SHARES SOLD
+         DP    SHRSOLD(11),SHRPRC(3)    CALCULATE SHARES SOLD
+         ZAP   0(8,4),SHRSOLD(8)        SET R4 TO RESULT
+*****************************************************************
+* CALCULATE COMMISION AMOUNT:
+         ZAP   COMMAMT(11),DEPAMT(11)   INIT COMMISION AMOUNT
+         MP    COMMAMT(11),COMMPCT(4)   CALCULATE COMM AMT
+         SRP   COMMAMT,4,5              SHIFT COMM AMOUNT
+         ZAP   0(11,6),COMMAMT(11)      SET R6 TO CALCULATION
+******************************************************************
+* EXIT LINKAGE:
+         L     13,4(,13)             R13 -> CALLER'S SAVE AREA
+         L     14,12(,13)            RESTORE R14
+         LM    0,12,20(13)           RESTORE R0 THROUGH R12
+         BR    14                    RETURN TO CALLER
+******************************************************************
+          LTORG                      LTORG TO ORGANIZE LITERALS
+          ORG   CALCVALS+((*-CALCVALS+31)/32)*32
+          DC    C'HERE IS THE STORAGE: CALCVALS **'
+REGS      DC    18F'0'               MAINREGS FOR STANDARD LINKAGE
+DEPAMT    DC    PL11'0'              DEPARTMENT AMOUNT
+COMMPCT   DC    PL4'0'               COMMISION PERCENTAGE
+SHRPRC    DC    PL3'0'               SHARE PRICE
+SHRSOLD   DC    PL11'0'              SHARES SOLD
+COMMAMT   DC    PL11'0'              COMMISION AMOUNT
+CALCVALS  AMODE 31      SPECIFY AMODE OVERRIDE
+CALCVALS  RMODE ANY     SPECIFY RMODE OVERRIDE
+         END   CALCVALS
