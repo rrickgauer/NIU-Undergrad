@@ -2,7 +2,7 @@
 These are some of the projects I worked on while completing my Bachelor of Science in Computer Science at Northern Illinois University.
 
 ## Course descriptions
-### CSCI-240: *Computer Programming in C++*
+### [CSCI-240: *Computer Programming in C++*](/CSCI-240)
 Emphasis on algorithm development and structured programming design and testing. Topics include input and output, decisions, loops, functions, arrays, text manipulation, files, and data abstraction.
 
 ### CSCI-241: *Intermediate Programming in C++*
