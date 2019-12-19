@@ -24,15 +24,3 @@ File, organization, job control languages, file access methods and utilities. Se
 
 ### CSCI-470: *Programming in Java*
 Intermediate-level course in object-oriented programming in Java, including multi-threading, graphical applets, and Internet-based distributed client-server database applications. Extensive laboratory work.
-
-
-
-## Additional courses currently completed/taking
-### CSCI-330: *Unix Systems and Networks*
-UNIX system usage and commands. Shell script programming. Network programming concepts and protocols. System call level and basic network programming in C++. Extensive laboratory work.
-
-### CSCI-466: *Databases*
-Software development in a representative current database system. Extensive laboratory work.
-
-### CSCI-467: *Intro to Software Engineering*
-Phases of the systems development life cycle and the tools used by the analyst in planning, specifying, and implementing a complex computer-based system. Related topics include documentation standards, interaction with users, and design of interfaces. Assignments include at least one major group project.
