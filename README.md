@@ -10,17 +10,17 @@ A second course in programming techniques with emphasis on design and implementa
 
 
 ### [CSCI-340: *Data Structures and Algorithm Analysis*](/CSCI-340)
-Application of analysis and design techniques to nonnumeric algorithms acting on data structures. Utilization of algorithmic analysis and design criteria in the selection of methods for data manipulation. Computing projects done in a high-level computing language. Extensive laboratory work.
+Application of analysis and design techniques to nonnumeric algorithms acting on data structures. Utilization of algorithmic analysis and design criteria in the selection of methods for data manipulation. Computing projects done in a high-level computing language.
 
 ### [CSCI-360: *Computer Programming In Assembler Language*](/CSCI-360)
-In-depth study of assembler language programming on a third-generation computer, including internal and external subroutines, conditional assembly, and the macro language. Students required to write a number of substantial programs. Extensive laboratory work.
+In-depth study of assembler language programming on a third-generation computer, including internal and external subroutines, conditional assembly, and the macro language. Students required to write a number of substantial programs.
 
 ### [CSCI 463: *Computer Architecture and Systems Organization*](/CSCI-463)
-Organization and use of computer systems. Basic concepts and examples from microcomputers and networks, peripheral components, data communications, and the relationship between hardware components and the operating system. Extensive laboratory work.
+Organization and use of computer systems. Basic concepts and examples from microcomputers and networks, peripheral components, data communications, and the relationship between hardware components and the operating system.
 
 ### [CSCI-465: *Enterprise Application Environments*](/CSCI-465)
-File, organization, job control languages, file access methods and utilities. Security. High-throughput data-intensive applications. Extensive laboratory work.
+File, organization, job control languages, file access methods and utilities. Security. High-throughput data-intensive applications.
 
 
 ### [CSCI-470: *Programming in Java*](/CSCI-470)
-Intermediate-level course in object-oriented programming in Java, including multi-threading, graphical applets, and Internet-based distributed client-server database applications. Extensive laboratory work.
+Intermediate-level course in object-oriented programming in Java, including multi-threading, graphical applets, and Internet-based distributed client-server database applications.
