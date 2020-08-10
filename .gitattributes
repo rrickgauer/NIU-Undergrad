@@ -16,6 +16,6 @@ CSCI-465/Assignment-8/SALESRPT linguist-language=COBOL
 CSCI-465/*.py linguist-detectable=false
 CSCI-480/*.py linguist-detectable=false
 
-CSCI-360/* linguist-language=Assembly
+
 
 
