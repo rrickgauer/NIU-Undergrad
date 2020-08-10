@@ -1,4 +1,4 @@
 # *.sql linguist-detectable=false
 *.ipynb linguist-language=python
 
-CSCI-465/* linguist-language=COBOL
+CSCI-465/* linguist-language=Assembly
