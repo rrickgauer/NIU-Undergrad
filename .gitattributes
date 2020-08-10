@@ -1,4 +1,4 @@
 # *.sql linguist-detectable=false
 *.ipynb linguist-language=python
 
-CSCI-465/* linguist-language6=c++
+CSCI-465/* linguist-language=COBOL
