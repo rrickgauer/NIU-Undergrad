@@ -1,4 +1,4 @@
 # *.sql linguist-detectable=false
 *.ipynb linguist-language=python
 
-CSCI-465/* linguist-language=C++
+CSCI-465/*.py linguist-detectable=false
