@@ -14,6 +14,7 @@ CSCI-465/Assignment-8/ASSIGN8 linguist-language=COBOL
 CSCI-465/Assignment-8/CALCVALS linguist-language=Assembly
 CSCI-465/Assignment-8/SALESRPT linguist-language=COBOL
 CSCI-465/*.py linguist-detectable=false
+CSCI-480/*.py linguist-detectable=false
 
 
 
