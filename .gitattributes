@@ -1,5 +1,5 @@
 # *.sql linguist-detectable=false
-*.ipynb linguist-language=python
+*.ipynb linguist-detectable=false
 
 # CSCI-465/* linguist-language=Assembly
 CSCI-465/Assignment-1/ASSIGN1 linguist-language=Assembly
