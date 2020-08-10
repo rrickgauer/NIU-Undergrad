@@ -1,4 +1,19 @@
 # *.sql linguist-detectable=false
 *.ipynb linguist-language=python
 
-CSCI-465/* linguist-language=Assembly
+# CSCI-465/* linguist-language=Assembly
+CSCI-465/Assignment-1/ASSIGN1 linguist-language=Assembly
+CSCI-465/Assignment-2/ASSIGN2 linguist-language=Assembly
+CSCI-465/Assignment-3/ASSIGN3A linguist-language=Assembly
+CSCI-465/Assignment-3/ASSIGN3B linguist-language=COBOL
+CSCI-465/Assignment-4/ASSIGN4 linguist-language=COBOL
+CSCI-465/Assignment-5/ASSIGN5 linguist-language=COBOL
+CSCI-465/Assignment-6/ASSIGN6 linguist-language=Assembly
+CSCI-465/Assignment-7/ASSIGN7 linguist-language=COBOL
+CSCI-465/Assignment-8/ASSIGN8 linguist-language=COBOL
+CSCI-465/Assignment-8/CALCVALS linguist-language=Assembly
+CSCI-465/Assignment-8/SALESRPT linguist-language=COBOL
+CSCI-465/*.py linguist-detectable=false
+
+
+
